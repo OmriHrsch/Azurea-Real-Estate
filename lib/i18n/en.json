@@ -8,5 +8,12 @@
   "nav.aria.toggle": "Toggle navigation menu",
   "hero.heading": "Villa Azurea",
   "hero.subtitle": "An enclave of quiet luxury positioned within the Côte d'Azur",
-  "hero.imageAlt": "Villa Azurea — Mediterranean estate at dusk"
+  "hero.imageAlt": "Villa Azurea — Mediterranean estate at dusk",
+  "estate.label": "The Estate",
+  "estate.panel1.caption": "The approach — stone gates framing the Mediterranean sea",
+  "estate.panel2.caption": "Grand salon with panoramic terrace access",
+  "estate.panel3.caption": "Infinity pool suspended above the Côte d'Azur",
+  "estate.panel4.caption": "Manicured gardens and private olive grove",
+  "estate.panel5.caption": "The estate by night — warm light, absolute silence",
+  "estate.panel6.caption": "The full domain from above — pool, terrace and villa aglow beneath a Provençal sky"
 }

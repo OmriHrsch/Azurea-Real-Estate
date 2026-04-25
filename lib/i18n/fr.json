@@ -8,5 +8,12 @@
   "nav.aria.toggle": "Basculer le menu",
   "hero.heading": "Villa Azurea",
   "hero.subtitle": "Un écrin de luxe discret suspendu au-dessus de la Côte d'Azur",
-  "hero.imageAlt": "Villa Azurea — Domaine méditerranéen au crépuscule"
+  "hero.imageAlt": "Villa Azurea — Domaine méditerranéen au crépuscule",
+  "estate.label": "Le Domaine",
+  "estate.panel1.caption": "L'approche — portails en pierre encadrant la Méditerranée",
+  "estate.panel2.caption": "Grand salon avec accès à la terrasse panoramique",
+  "estate.panel3.caption": "Piscine à débordement suspendue au-dessus de la Côte d'Azur",
+  "estate.panel4.caption": "Jardins soignés et oliveraie privée",
+  "estate.panel5.caption": "Le domaine de nuit — lumière douce, silence absolu",
+  "estate.panel6.caption": "Le domaine vu du ciel — piscine, terrasses et villa illuminées sous le ciel provençal"
 }
