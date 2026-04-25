@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useContext, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  type ReactNode,
+} from "react";
 import en from "./en.json";
 import fr from "./fr.json";
 
@@ -21,6 +27,10 @@ const LocaleContext = createContext<LocaleContextValue | null>(null);
 
 export function LocaleProvider({ children }: { children: ReactNode }) {
   const [locale, setLocale] = useState<Locale>("en");
+
+  useEffect(() => {
+    document.documentElement.lang = locale;
+  }, [locale]);
 
   const t = (key: TranslationKey): string =>
     translations[locale][key] ?? translations.en[key] ?? key;
