@@ -2,8 +2,10 @@
 
 import Image from "next/image";
 import { useLocale } from "@/lib/i18n";
+import { photo, type PhotoKey } from "@/lib/media";
 import styles from "./Hero.module.css";
-import manifest from "@/lib/media-manifest.json";
+
+const HERO_IMAGE: PhotoKey = "Azurea-10.JPG";
 
 export default function Hero() {
   const { t } = useLocale();
@@ -11,7 +13,7 @@ export default function Hero() {
   return (
     <section className={styles.hero}>
       <Image
-        src={manifest.photos["Azurea-10.JPG"]}
+        src={photo(HERO_IMAGE)}
         alt={t("hero.imageAlt")}
         fill
         priority
