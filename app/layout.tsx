@@ -1,23 +1,23 @@
 import type { Metadata } from "next";
-import { Noto_Serif, Manrope } from "next/font/google";
+import { Cormorant_Garamond, Montserrat } from "next/font/google";
 import { LocaleProvider } from "@/lib/i18n";
 import "./globals.css";
 
-const notoSerif = Noto_Serif({
+const cormorantGaramond = Cormorant_Garamond({
   subsets: ["latin"],
   variable: "--font-serif",
-  weight: ["400", "700"],
+  weight: ["300", "400", "500", "600", "700"],
   style: ["normal", "italic"],
 });
 
-const manrope = Manrope({
+const montserrat = Montserrat({
   subsets: ["latin"],
   variable: "--font-sans",
-  weight: ["400", "500", "600"],
+  weight: ["300", "400", "500", "600"],
 });
 
 export const metadata: Metadata = {
-  title: "Villa Azurea · Mougins",
+  title: "Villa Azuréa — Mougins, French Riviera",
   description: "An enclave of quiet luxury suspended above the Côte d'Azur",
 };
 
@@ -27,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${notoSerif.variable} ${manrope.variable}`}>
+    <html lang="en" className={`${cormorantGaramond.variable} ${montserrat.variable}`}>
       <body>
         <LocaleProvider>{children}</LocaleProvider>
       </body>
