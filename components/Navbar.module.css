@@ -3,9 +3,13 @@
   top: 0;
   width: 100%;
   z-index: 100;
-  background-color: rgba(252, 249, 244, 0.9);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: transparent;
+  transition: background 0.4s ease, box-shadow 0.4s ease;
+}
+
+.scrolled {
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: 0 1px 0 rgba(10, 26, 46, 0.07);
 }
 
 .navInner {
@@ -15,22 +19,32 @@
   justify-content: space-between;
   max-width: 1440px;
   margin: 0 auto;
-  padding: 32px 64px;
+  padding: 22px 48px;
+  transition: padding 0.4s ease;
+}
+
+.scrolled .navInner {
+  padding: 14px 48px;
 }
 
 .logo {
   font-family: var(--font-serif);
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 400;
-  letter-spacing: -0.02em;
-  color: #1c1b1a;
+  letter-spacing: 0.32em;
+  color: #ffffff;
   white-space: nowrap;
   flex-shrink: 0;
+  transition: color 0.4s ease;
+}
+
+.scrolled .logo {
+  color: var(--navy);
 }
 
 .navLinks {
   display: flex;
-  gap: 32px;
+  gap: 38px;
   align-items: center;
   flex: 1;
   justify-content: center;
@@ -38,18 +52,26 @@
 
 .navLink {
   font-family: var(--font-sans);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.15em;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #7b766f;
+  color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
   white-space: nowrap;
-  transition: color 0.3s;
+  transition: color 0.3s ease;
 }
 
 .navLink:hover {
-  color: #1c1c19;
+  color: #ffffff;
+}
+
+.scrolled .navLink {
+  color: var(--muted);
+}
+
+.scrolled .navLink:hover {
+  color: var(--navy);
 }
 
 .navRight {
@@ -74,48 +96,73 @@
 .localeSep {
   font-family: var(--font-sans);
   font-size: 10px;
-  color: #ccc5bd;
+  color: rgba(255, 255, 255, 0.4);
   user-select: none;
+  transition: color 0.4s ease;
+}
+
+.scrolled .localeSep {
+  color: rgba(10, 26, 46, 0.3);
 }
 
 .localeBtn {
   font-family: var(--font-sans);
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0.12em;
-  color: #7b766f;
+  color: rgba(255, 255, 255, 0.6);
   background: none;
   border: none;
+  border-radius: 0;
   cursor: pointer;
   padding: 0;
-  transition: color 0.2s;
+  transition: color 0.2s ease;
 }
 
 .localeBtn:hover {
-  color: #1c1c19;
+  color: #ffffff;
 }
 
 .localeBtnActive {
-  color: #1c1c19;
+  color: #ffffff;
+}
+
+.scrolled .localeBtn {
+  color: var(--muted);
+}
+
+.scrolled .localeBtn:hover,
+.scrolled .localeBtnActive {
+  color: var(--navy);
 }
 
 .ctaButton {
   font-family: var(--font-sans);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.15em;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  background: #000000;
   color: #ffffff;
+  background: transparent;
   text-decoration: none;
-  padding: 12px 24px;
+  padding: 10px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
   border-radius: 0;
   flex-shrink: 0;
-  transition: background 0.3s;
+  transition: color 0.3s ease, border-color 0.3s ease, background 0.3s ease;
 }
 
 .ctaButton:hover {
-  background: #625e53;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.scrolled .ctaButton {
+  color: var(--navy);
+  border-color: var(--navy);
+}
+
+.scrolled .ctaButton:hover {
+  background: rgba(10, 26, 46, 0.05);
 }
 
 .hamburger {
@@ -126,6 +173,7 @@
   height: 16px;
   background: none;
   border: none;
+  border-radius: 0;
   cursor: pointer;
   padding: 0;
   flex-shrink: 0;
@@ -134,13 +182,22 @@
 .hamburger span {
   display: block;
   width: 100%;
-  height: 1.5px;
-  background: #1c1c19;
+  height: 1px;
+  background: #ffffff;
+  transition: background 0.4s ease;
 }
 
-@media (max-width: 768px) {
+.scrolled .hamburger span {
+  background: var(--navy);
+}
+
+@media (max-width: 960px) {
   .navInner {
-    padding: 24px 24px;
+    padding: 20px 24px;
+  }
+
+  .scrolled .navInner {
+    padding: 14px 24px;
   }
 
   .navLinks {
@@ -151,14 +208,23 @@
     right: 0;
     flex-direction: column;
     align-items: flex-start;
-    background: rgba(252, 249, 244, 0.97);
-    padding: 16px 24px 24px;
+    background: var(--paper);
+    padding: 16px 24px 28px;
     gap: 20px;
-    border-top: 1px solid rgba(204, 197, 189, 0.4);
+    border-top: 1px solid var(--line);
   }
 
   .navLinksOpen {
     display: flex;
+  }
+
+  .navLinks .navLink {
+    color: var(--navy);
+  }
+
+  .navLinks .navLink:hover {
+    color: var(--navy);
+    opacity: 0.7;
   }
 
   .navRight {
