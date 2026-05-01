@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Villa Azuréa — Mougins, French Riviera</title>
+<meta name="description" content="A 600m² Mediterranean masterpiece on 2.1 hectares overlooking the Bay of Cannes. Six ensuite bedrooms, infinity pool, panoramic sea-to-mountain views." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+<style>
+  :root {
+    --navy: #0a1a2e;
+    --navy-deep: #050d1a;
+    --navy-soft: #14233b;
+    --ink: #0a0e16;
+    --paper: #ffffff;
+    --paper-warm: #fafaf7;
+    --paper-cool: #f4f5f7;
+    --line: #d9dde3;
+    --muted: #6b7280;
+    --gold: #b89968;
+
+    --serif: 'Cormorant Garamond', 'Times New Roman', serif;
+    --sans: 'Montserrat', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    color: var(--ink);
+    background: var(--paper);
+    line-height: 1.6;
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  img { display: block; max-width: 100%; height: auto; }
+
+  /* ============ TOP NAV ============ */
+  .nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    padding: 22px 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: background-color .35s ease, padding .35s ease, box-shadow .35s ease;
+    background: transparent;
+  }
+  .nav.scrolled {
+    background: rgba(255,255,255,0.97);
+    padding: 14px 48px;
+    box-shadow: 0 1px 0 rgba(10,26,46,0.07);
+  }
+  .nav-brand {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 26px;
+    letter-spacing: 0.32em;
+    color: var(--paper);
+    text-decoration: none;
+    transition: color .35s ease;
+  }
+  .nav.scrolled .nav-brand { color: var(--navy); }
+
+  .nav-links {
+    display: flex; gap: 38px; list-style: none;
+  }
+  .nav-links a {
+    font-family: var(--sans);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--paper);
+    text-decoration: none;
+    font-weight: 400;
+    padding: 6px 0;
+    border-bottom: 1px solid transparent;
+    transition: color .35s ease, border-color .25s ease;
+  }
+  .nav.scrolled .nav-links a { color: var(--navy); }
+  .nav-links a:hover { border-bottom-color: currentColor; }
+
+  .nav-cta {
+    display: inline-block;
+    font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+    padding: 10px 22px;
+    border: 1px solid currentColor;
+    color: var(--paper);
+    text-decoration: none;
+    transition: background .25s ease, color .25s ease;
+  }
+  .nav.scrolled .nav-cta { color: var(--navy); }
+  .nav-cta:hover { background: var(--paper); color: var(--navy); }
+  .nav.scrolled .nav-cta:hover { background: var(--navy); color: var(--paper); }
+
+  .nav-burger { display: none; background: none; border: 0; cursor: pointer; color: inherit; }
+
+  /* ============ HERO ============ */
+  .hero {
+    position: relative;
+    height: 100vh;
+    min-height: 640px;
+    overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--paper);
+    text-align: center;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background-image: url('photos/Azurea-6.JPG');
+    background-size: cover;
+    background-position: center 45%;
+    transform: scale(1.06);
+    will-change: transform;
+  }
+  .hero-bg::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(10,26,46,0.35) 0%, rgba(10,26,46,0.10) 35%, rgba(10,26,46,0.55) 100%);
+  }
+  .hero-content {
+    position: relative; z-index: 2;
+    padding: 0 24px;
+    opacity: 0; transform: translateY(20px);
+    animation: heroIn 1.4s 0.3s ease forwards;
+  }
+  @keyframes heroIn { to { opacity: 1; transform: translateY(0); } }
+
+  .hero-eyebrow {
+    font-size: 11px; letter-spacing: 0.45em; text-transform: uppercase;
+    margin-bottom: 28px; opacity: 0.85;
+  }
+  .hero-title {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(64px, 11vw, 168px);
+    line-height: 0.95;
+    letter-spacing: 0.04em;
+    margin: 0;
+    text-shadow: 0 2px 30px rgba(0,0,0,0.25);
+  }
+  .hero-rule {
+    width: 60px; height: 1px; background: rgba(255,255,255,0.7);
+    margin: 28px auto;
+  }
+  .hero-sub {
+    font-size: 13px; letter-spacing: 0.4em; text-transform: uppercase;
+    font-weight: 400;
+  }
+  .hero-scroll {
+    position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+    z-index: 2;
+  }
+  .hero-scroll::after {
+    content: ''; display: block;
+    width: 1px; height: 56px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0));
+    animation: drop 2.4s ease-in-out infinite;
+  }
+  @keyframes drop { 0%,100% { transform: scaleY(0.4); transform-origin: top; } 50% { transform: scaleY(1); } }
+
+  /* ============ SECTION BASE ============ */
+  section { position: relative; }
+  .section-eyebrow {
+    font-size: 11px; letter-spacing: 0.4em; text-transform: uppercase;
+    color: var(--gold); font-weight: 500; margin-bottom: 18px;
+  }
+  .section-title {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(36px, 4.6vw, 62px);
+    line-height: 1.05;
+    letter-spacing: 0.01em;
+    color: var(--navy);
+  }
+  .section-rule {
+    width: 60px; height: 1px; background: var(--navy); opacity: 0.4;
+    margin: 28px 0;
+  }
+
+  /* ============ ABOUT / PARALLAX ============ */
+  .about {
+    background: var(--paper);
+    padding: 130px 48px 0;
+  }
+  .about-intro {
+    max-width: 1280px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1.4fr; gap: 80px;
+    align-items: start;
+  }
+  .about-intro p.lede {
+    font-family: var(--serif);
+    font-size: clamp(20px, 1.6vw, 26px);
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--navy);
+  }
+  .about-intro p.body {
+    color: #2a2f39;
+    font-size: 15px;
+    line-height: 1.85;
+    margin-bottom: 18px;
+  }
+
+  .parallax {
+    position: relative;
+    margin-top: 110px;
+    height: 70vh; min-height: 480px;
+    background-image: url('photos/Azurea-2.JPG');
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center;
+  }
+  .parallax::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(10,26,46,0.10) 0%, rgba(10,26,46,0.45) 100%);
+  }
+  .parallax-quote {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    color: var(--paper); text-align: center; padding: 0 24px;
+  }
+  .parallax-quote .mark {
+    font-family: var(--serif); font-size: 80px; line-height: 0.5;
+    margin-bottom: 12px; opacity: 0.7;
+  }
+  .parallax-quote p {
+    font-family: var(--serif);
+    font-weight: 300;
+    font-size: clamp(22px, 2.6vw, 38px);
+    max-width: 880px; line-height: 1.35;
+  }
+  .parallax-quote span {
+    margin-top: 24px;
+    font-size: 11px; letter-spacing: 0.4em; text-transform: uppercase;
+  }
+
+  /* ============ NARRATIVE ============ */
+  .narrative {
+    background: var(--paper-warm);
+    padding: 150px 48px;
+  }
+  .narrative-inner {
+    max-width: 740px; margin: 0 auto;
+    text-align: center;
+  }
+  .narrative-inner .section-eyebrow { margin-bottom: 36px; }
+  .narrative-para {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(22px, 2vw, 28px);
+    line-height: 1.55;
+    color: var(--navy);
+    margin: 0 0 28px;
+    text-wrap: pretty;
+  }
+  .narrative-para:last-child { margin-bottom: 0; }
+
+  /* Highlights grid */
+  .highlights {
+    background: var(--paper-warm);
+    padding: 130px 48px;
+  }
+  .highlights-inner {
+    max-width: 1280px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 2fr; gap: 80px; align-items: start;
+  }
+  .highlights-list {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 28px 56px;
+    list-style: none;
+  }
+  .highlights-list li {
+    border-top: 1px solid var(--line);
+    padding-top: 18px;
+  }
+  .highlights-list .num {
+    font-family: var(--serif);
+    font-size: 12px; letter-spacing: 0.3em; color: var(--gold);
+    margin-bottom: 6px;
+  }
+  .highlights-list .label {
+    font-family: var(--serif);
+    font-size: 22px; color: var(--navy);
+    line-height: 1.25;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  .highlights-list .meta {
+    font-size: 12px; color: var(--muted); letter-spacing: 0.05em;
+  }
+
+  /* Feature image strip */
+  .feature-strip {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0;
+    height: 70vh; min-height: 520px;
+  }
+  .feature-strip > div {
+    background-size: cover; background-position: center;
+  }
+  .feature-strip .left { background-image: url('photos/Azurea-10.JPG'); }
+  .feature-strip .right { background-image: url('photos/Azurea-12.JPG'); }
+
+  .feature-text {
+    background: var(--navy);
+    color: var(--paper);
+    padding: 130px 48px;
+    text-align: center;
+  }
+  .feature-text-inner {
+    max-width: 800px; margin: 0 auto;
+  }
+  .feature-text .section-title { color: var(--paper); }
+  .feature-text .section-eyebrow { color: var(--gold); }
+  .feature-text p {
+    font-family: var(--serif);
+    font-size: clamp(18px, 1.5vw, 22px);
+    font-weight: 300;
+    line-height: 1.7;
+    margin-top: 28px;
+    color: rgba(255,255,255,0.86);
+  }
+
+  /* ============ LOCATION ============ */
+  .location {
+    background: var(--paper);
+    padding: 130px 48px 0;
+  }
+  .location-header {
+    max-width: 1280px; margin: 0 auto 64px;
+    display: grid; grid-template-columns: 1fr 1.4fr; gap: 80px;
+    align-items: end;
+  }
+  .location-header p {
+    color: #2a2f39; font-size: 15px; line-height: 1.85;
+  }
+  .location-grid {
+    max-width: 1280px; margin: 0 auto;
+    display: grid; grid-template-columns: 1.6fr 1fr; gap: 0;
+    border-top: 1px solid var(--line);
+  }
+  #map {
+    height: 600px;
+    background: var(--paper-cool);
+  }
+  .poi-list {
+    list-style: none;
+    border-left: 1px solid var(--line);
+    background: var(--paper-warm);
+    overflow-y: auto;
+    max-height: 600px;
+  }
+  .poi-list li {
+    padding: 22px 28px;
+    border-bottom: 1px solid var(--line);
+    cursor: pointer;
+    transition: background .2s ease, padding .25s ease;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 6px 18px;
+    align-items: baseline;
+  }
+  .poi-list li:hover, .poi-list li.active {
+    background: var(--paper);
+    padding-left: 36px;
+  }
+  .poi-list li.active { background: var(--navy); color: var(--paper); }
+  .poi-list .poi-name {
+    font-family: var(--serif);
+    font-size: 19px;
+    color: var(--navy);
+    font-weight: 500;
+  }
+  .poi-list li.active .poi-name { color: var(--paper); }
+  .poi-list .poi-dist {
+    font-size: 11px; letter-spacing: 0.18em; color: var(--gold); text-transform: uppercase;
+    font-weight: 500;
+  }
+  .poi-list .poi-desc {
+    grid-column: 1 / -1;
+    font-size: 13px; color: var(--muted); line-height: 1.55;
+  }
+  .poi-list li.active .poi-desc { color: rgba(255,255,255,0.7); }
+
+  /* Style Leaflet for our brand */
+  .leaflet-container { font-family: var(--sans); }
+  .villa-marker {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--navy);
+    border: 3px solid var(--paper);
+    box-shadow: 0 4px 18px rgba(10,26,46,0.4);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--paper);
+    font-family: var(--serif);
+    font-weight: 600;
+    font-size: 18px;
+  }
+  .poi-marker {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 2px solid var(--navy);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+  .poi-marker.active {
+    background: var(--gold);
+    border-color: var(--paper);
+    transform: scale(1.4);
+  }
+  .leaflet-popup-content-wrapper {
+    border-radius: 0;
+    box-shadow: 0 8px 30px rgba(10,26,46,0.18);
+  }
+  .leaflet-popup-content {
+    margin: 14px 18px; font-family: var(--sans);
+  }
+  .leaflet-popup-content b {
+    font-family: var(--serif); font-size: 16px; color: var(--navy);
+    font-weight: 600;
+  }
+
+  /* ============ GALLERY (horizontal reel) ============ */
+  .gallery {
+    background: var(--paper);
+    padding: 130px 0 130px;
+    overflow: hidden;
+  }
+  .gallery-header {
+    max-width: 1280px; margin: 0 auto 56px; padding: 0 48px;
+    display: flex; align-items: end; justify-content: space-between; gap: 32px;
+  }
+  .gallery-header .gallery-meta {
+    font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--muted); padding-bottom: 6px;
+  }
+  .reel-wrap { position: relative; }
+  .reel {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 18px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    padding: 0 48px 36px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .reel::-webkit-scrollbar { display: none; }
+  .reel figure {
+    flex: 0 0 auto;
+    margin: 0;
+    scroll-snap-align: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    background: var(--navy);
+  }
+  .reel figure.size-portrait  { width: 360px; height: 560px; }
+  .reel figure.size-landscape { width: 720px; height: 480px; }
+  .reel figure.size-square    { width: 520px; height: 520px; }
+  .reel img {
+    width: 100%; height: 100%; object-fit: cover;
+    transition: transform 1.2s cubic-bezier(.2,.7,.3,1);
+    display: block;
+  }
+  .reel figure:hover img { transform: scale(1.04); }
+  .reel figcaption {
+    position: absolute; left: 22px; right: 22px; bottom: 22px;
+    color: var(--paper);
+    font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+    pointer-events: none;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.45);
+  }
+  .reel figcaption .num {
+    font-family: var(--serif); font-size: 12px; letter-spacing: 0.2em;
+    color: var(--gold); display: block; margin-bottom: 4px; text-transform: none;
+  }
+  .reel-controls {
+    max-width: 1280px; margin: 0 auto; padding: 0 48px;
+    display: flex; align-items: center; gap: 18px;
+  }
+  .reel-progress {
+    flex: 1; height: 1px; background: var(--line); position: relative;
+  }
+  .reel-progress::after {
+    content: ''; position: absolute; left: 0; top: -1px; height: 3px;
+    background: var(--navy);
+    width: var(--reel-progress, 8%);
+    transition: width .25s ease;
+  }
+  .reel-btn {
+    width: 44px; height: 44px; border-radius: 50%;
+    border: 1px solid var(--line); background: transparent;
+    cursor: pointer; color: var(--navy);
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s, color .2s, border-color .2s, opacity .2s;
+    font-family: var(--serif); font-size: 18px;
+  }
+  .reel-btn:hover:not(:disabled) { background: var(--navy); color: var(--paper); border-color: var(--navy); }
+  .reel-btn:disabled { opacity: 0.3; cursor: default; }
+  .reel-count {
+    font-family: var(--serif); font-size: 14px; color: var(--muted);
+    letter-spacing: 0.05em; min-width: 70px; text-align: right;
+  }
+  .reel-count strong { color: var(--navy); font-weight: 500; }
+  /* Lightbox */
+  .lightbox {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(5,13,26,0.96);
+    display: none; align-items: center; justify-content: center;
+    padding: 40px;
+  }
+  .lightbox.open { display: flex; }
+  .lightbox img {
+    max-width: 92vw; max-height: 88vh; object-fit: contain;
+  }
+  .lightbox button {
+    position: absolute;
+    background: transparent; border: 1px solid rgba(255,255,255,0.4);
+    color: var(--paper);
+    font-family: var(--sans);
+    font-size: 14px; letter-spacing: 0.2em;
+    padding: 12px 16px; cursor: pointer;
+    transition: background .2s ease;
+  }
+  .lightbox button:hover { background: rgba(255,255,255,0.1); }
+  .lb-close { top: 24px; right: 24px; }
+  .lb-prev { left: 24px; top: 50%; transform: translateY(-50%); }
+  .lb-next { right: 24px; top: 50%; transform: translateY(-50%); }
+  .lb-counter {
+    position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+    color: var(--paper); font-size: 11px; letter-spacing: 0.4em;
+  }
+
+  /* ============ CONTACT ============ */
+  .contact {
+    background: var(--navy-deep);
+    color: var(--paper);
+    position: relative;
+    overflow: hidden;
+  }
+  .contact::before {
+    content: ''; position: absolute; inset: 0;
+    background-image: url('photos/Azurea-50.JPG');
+    background-size: cover; background-position: center;
+    opacity: 0.18;
+  }
+  .contact-inner {
+    position: relative;
+    max-width: 880px; margin: 0 auto;
+    padding: 150px 48px 130px;
+    text-align: center;
+  }
+  .contact .section-title { color: var(--paper); }
+  .contact .section-eyebrow { color: var(--gold); }
+  .contact .section-rule { margin-left: auto; margin-right: auto; }
+
+  .contact-lede {
+    font-family: var(--serif);
+    font-size: 18px; font-style: italic;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.82);
+    margin: 24px auto 0;
+    max-width: 520px;
+  }
+
+  .agents {
+    margin-top: 72px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
+    text-align: left;
+  }
+  .agent {
+    border-top: 1px solid rgba(255,255,255,0.18);
+    padding-top: 28px;
+  }
+  .agent .role {
+    font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 12px;
+  }
+  .agent .name {
+    font-family: var(--serif);
+    font-size: 28px; font-weight: 400;
+    color: var(--paper);
+    margin-bottom: 24px;
+    letter-spacing: 0.01em;
+  }
+  .agent-actions {
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .agent-btn {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 18px;
+    text-decoration: none;
+    font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase;
+    font-weight: 500;
+    transition: background .25s ease, color .25s ease, border-color .25s ease;
+  }
+  .agent-btn-icon {
+    display: inline-flex; align-items: center; justify-content: center;
+    flex: 0 0 auto;
+  }
+  .agent-btn-num {
+    margin-left: auto;
+    font-family: var(--serif);
+    font-size: 14px; letter-spacing: 0.04em; text-transform: none;
+    font-weight: 400;
+    opacity: 0.85;
+  }
+  .agent-btn.primary {
+    background: var(--gold); color: var(--navy);
+    border: 1px solid var(--gold);
+  }
+  .agent-btn.primary:hover {
+    background: var(--paper); border-color: var(--paper); color: var(--navy);
+  }
+  .agent-btn.secondary {
+    background: transparent; color: var(--paper);
+    border: 1px solid rgba(255,255,255,0.22);
+  }
+  .agent-btn.secondary:hover {
+    background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.45);
+  }
+
+  .contact-secondary {
+    margin-top: 64px;
+    display: flex; align-items: center; justify-content: center; gap: 22px;
+    flex-wrap: wrap;
+    font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
+  }
+  .contact-secondary a {
+    color: rgba(255,255,255,0.75);
+    text-decoration: none;
+    transition: color .2s ease;
+    display: inline-flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid rgba(255,255,255,0.18);
+    padding-bottom: 4px;
+  }
+  .contact-secondary a:hover { color: var(--paper); border-color: var(--gold); }
+  .contact-email { font-family: var(--serif); font-size: 16px; letter-spacing: 0.05em; text-transform: none; }
+  .contact-divider {
+    width: 1px; height: 16px; background: rgba(255,255,255,0.22);
+  }
+
+  /* ============ FOOTER ============ */
+  footer {
+    background: var(--navy-deep);
+    color: rgba(255,255,255,0.5);
+    padding: 36px 48px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    position: relative; z-index: 2;
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  footer span { font-family: var(--serif); letter-spacing: 0.3em; color: rgba(255,255,255,0.7); }
+
+  /* Reveal animation */
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 1s ease, transform 1s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 960px) {
+    .nav { padding: 16px 22px; }
+    .nav.scrolled { padding: 12px 22px; }
+    .nav-brand { font-size: 20px; letter-spacing: 0.28em; }
+    .nav-links { display: none; }
+    .nav-links.open {
+      display: flex; flex-direction: column;
+      position: absolute; top: 100%; left: 0; right: 0;
+      background: var(--paper); padding: 24px;
+      gap: 18px; border-top: 1px solid var(--line);
+    }
+    .nav-links.open a { color: var(--navy); }
+    .nav-burger { display: block; padding: 8px; color: inherit; }
+    .nav.scrolled .nav-burger { color: var(--navy); }
+    .nav-cta { display: none; }
+
+    .about, .narrative, .location, .gallery { padding: 80px 22px; }
+    .about-intro, .highlights-inner, .location-header { grid-template-columns: 1fr; gap: 32px; }
+    .highlights-list { grid-template-columns: 1fr; gap: 24px; }
+    .feature-strip { grid-template-columns: 1fr; height: auto; }
+    .feature-strip > div { height: 50vh; min-height: 320px; }
+    .feature-text { padding: 80px 22px; }
+    .location-grid { grid-template-columns: 1fr; }
+    .poi-list { border-left: 0; max-height: none; }
+    .gallery-header { flex-direction: column; align-items: flex-start; gap: 14px; padding: 0 22px; }
+    .reel { padding: 0 22px 32px; }
+    .reel figure.size-portrait  { width: 70vw; height: 90vw; }
+    .reel figure.size-landscape { width: 86vw; height: 60vw; }
+    .reel figure.size-square    { width: 78vw; height: 78vw; }
+    .reel-controls { padding: 0 22px; }
+
+    .contact-inner { padding: 80px 22px; }
+    .agents { grid-template-columns: 1fr; gap: 28px; }
+    .contact-secondary { flex-direction: column; gap: 14px; }
+    .contact-divider { display: none; }
+
+    .parallax { background-attachment: scroll; height: 50vh; min-height: 380px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav class="nav" id="nav">
+  <a href="#hero" class="nav-brand">AZURÉA</a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#about">The Estate</a></li>
+    <li><a href="#location">Location</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Enquire</a>
+  <button class="nav-burger" id="burger" aria-label="Menu">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"/>
+    </svg>
+  </button>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="hero">
+  <div class="hero-bg" id="heroBg"></div>
+  <!-- Hero is intentionally bare — the looping video carries the visual weight. -->
+  <div class="hero-scroll" aria-hidden="true"></div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section class="about" id="about">
+  <div class="about-intro">
+    <div class="reveal">
+      <div class="section-eyebrow">The Estate</div>
+      <h2 class="section-title">A 600&thinsp;m² oasis<br/>above the Bay of Cannes.</h2>
+    </div>
+    <div class="reveal">
+      <p class="lede">Located in Mougins, in the heart of an exclusive private gated community of ten villas including the historic Château de Lérins, Villa Azuréa embodies the French Riviera art of living combined with modern luxury.</p>
+      <div class="section-rule"></div>
+      <p class="body">A rare oasis of peace overlooking the Bay of Cannes, the estate is set on 2.1 hectares of landscaped grounds and offers an exceptional 300-degree panoramic view of the sea and surrounding mountains.</p>
+      <p class="body">Designed as a complex of three buildings — main house, guest house and pool house — the property combines turnkey contemporary interiors with the warmth and craftsmanship of the Provençal tradition.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PARALLAX QUOTE ============ -->
+<div class="parallax">
+  <div class="parallax-quote">
+    <div class="mark">&ldquo;</div>
+    <p>Sea-to-mountain panoramic views, an infinity pool that meets the horizon, and 2.1 hectares of absolute privacy.</p>
+    <span>Mougins · 06250</span>
+  </div>
+</div>
+
+<!-- ============ NARRATIVE ============ -->
+<section class="narrative">
+  <div class="narrative-inner reveal">
+    <div class="section-eyebrow" style="text-align:center;">The Estate</div>
+    <p class="narrative-para">
+      In the hills of Mougins — a village that drew Picasso, who made it his home,
+      and welcomed Cocteau, Léger, and Man Ray before him — Villa Azuréa rests on
+      2.1&nbsp;hectares of cypress, olive, and wild rosemary above the Bay of Cannes.
+    </p>
+    <p class="narrative-para">
+      Six hundred square metres of living space open to a seventeen-metre infinity
+      pool that meets the horizon. The sea on one side, the Préalpes on the other.
+    </p>
+  </div>
+</section>
+
+<!-- Feature image strip -->
+<div class="feature-strip">
+  <div class="left"></div>
+  <div class="right"></div>
+</div>
+
+<div class="feature-text">
+  <div class="feature-text-inner reveal">
+    <div class="section-eyebrow">Indoor · Outdoor</div>
+    <h2 class="section-title" style="color:var(--paper);">Where the horizon<br/>becomes the room.</h2>
+    <p>Floor-to-ceiling glazing dissolves the line between living spaces and the Mediterranean panorama. From the covered terrace to the infinity edge of the pool, the estate is designed for the choreography of sun, sea and slow afternoons.</p>
+  </div>
+</div>
+
+<!-- ============ LOCATION ============ -->
+<section class="location" id="location">
+  <div class="location-header">
+    <div class="reveal">
+      <div class="section-eyebrow">Location</div>
+      <h2 class="section-title">In the hills<br/>of Mougins.</h2>
+    </div>
+    <div class="reveal">
+      <p>Set in the historic perched village of Mougins — long beloved by Picasso and Cocteau — the villa is moments from Cannes, twenty-five minutes from Nice Côte d'Azur Airport, and within easy reach of Antibes, Monaco and the perfumeries of Grasse.</p>
+    </div>
+  </div>
+
+  <div class="location-grid reveal">
+    <div id="map" aria-label="Map showing Villa Azuréa and surrounding points of interest"></div>
+    <ul class="poi-list" id="poiList"></ul>
+  </div>
+</section>
+
+<!-- ============ GALLERY ============ -->
+<section class="gallery" id="gallery">
+  <div class="gallery-header reveal">
+    <div>
+      <div class="section-eyebrow">Gallery</div>
+      <h2 class="section-title">A walk through<br/>the estate.</h2>
+    </div>
+    <div class="gallery-meta">11 photographs · scroll →</div>
+  </div>
+
+  <div class="reel-wrap">
+    <div class="reel" id="reel">
+      <figure class="size-landscape" data-i="0">
+        <img src="photos/Azurea-6.JPG" alt="Infinity pool with sea view"/>
+        <figcaption><span class="num">01</span>The infinity pool</figcaption>
+      </figure>
+      <figure class="size-portrait" data-i="1">
+        <img src="photos/Azurea-10.JPG" alt="Covered terrace dining"/>
+        <figcaption><span class="num">02</span>Covered terrace, dining</figcaption>
+      </figure>
+      <figure class="size-square" data-i="2">
+        <img src="photos/Azurea-12.JPG" alt="Outdoor living lounge"/>
+        <figcaption><span class="num">03</span>Outdoor living</figcaption>
+      </figure>
+      <figure class="size-landscape" data-i="3">
+        <img src="photos/Azurea-22.JPG" alt="Main living room"/>
+        <figcaption><span class="num">04</span>Main living room</figcaption>
+      </figure>
+      <figure class="size-portrait" data-i="4">
+        <img src="photos/Azurea-47.JPG" alt="Living room with terrace view"/>
+        <figcaption><span class="num">05</span>Living, toward the terrace</figcaption>
+      </figure>
+      <figure class="size-square" data-i="5">
+        <img src="photos/Azurea-25.JPG" alt="Master bedroom"/>
+        <figcaption><span class="num">06</span>Master bedroom</figcaption>
+      </figure>
+      <figure class="size-portrait" data-i="6">
+        <img src="photos/Azurea-30.JPG" alt="Master bathroom"/>
+        <figcaption><span class="num">07</span>Master bathroom</figcaption>
+      </figure>
+      <figure class="size-landscape" data-i="7">
+        <img src="photos/Azurea-20.JPG" alt="Kitchen at twilight"/>
+        <figcaption><span class="num">08</span>Kitchen, at twilight</figcaption>
+      </figure>
+      <figure class="size-square" data-i="8">
+        <img src="photos/Azurea-40.JPG" alt="Multimedia room"/>
+        <figcaption><span class="num">09</span>Multimedia room</figcaption>
+      </figure>
+      <figure class="size-landscape" data-i="9">
+        <img src="photos/Azurea-50.JPG" alt="Villa at night"/>
+        <figcaption><span class="num">10</span>The villa, after dark</figcaption>
+      </figure>
+      <figure class="size-landscape" data-i="10">
+        <img src="photos/Azurea-1.JPG" alt="Aerial view of the estate"/>
+        <figcaption><span class="num">11</span>Aerial, the estate</figcaption>
+      </figure>
+    </div>
+
+    <div class="reel-controls">
+      <button class="reel-btn" id="reelPrev" aria-label="Previous">←</button>
+      <div class="reel-progress" id="reelProgress"></div>
+      <button class="reel-btn" id="reelNext" aria-label="Next">→</button>
+      <div class="reel-count"><strong id="reelIdx">01</strong> / 11</div>
+    </div>
+  </div>
+</section>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" id="lbClose">Close ✕</button>
+  <button class="lb-prev" id="lbPrev">‹ Prev</button>
+  <img id="lbImg" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="" />
+  <button class="lb-next" id="lbNext">Next ›</button>
+  <div class="lb-counter" id="lbCounter"></div>
+</div>
+
+<!-- ============ CONTACT ============ -->
+<section class="contact" id="contact">
+  <div class="contact-inner">
+    <div class="contact-text reveal">
+      <div class="section-eyebrow">Contact</div>
+      <h2 class="section-title">Private viewings,<br/>by appointment.</h2>
+      <div class="section-rule" style="background:var(--paper); opacity:0.4;"></div>
+      <p class="contact-lede">
+        We respond within 24 hours, in French, English, Italian, and Russian.
+      </p>
+
+      <div class="agents">
+        <div class="agent">
+          <div class="role">Représentante des ventes</div>
+          <div class="name">Bérangère Calabria</div>
+          <div class="agent-actions">
+            <a class="agent-btn primary" href="tel:+33658714480">
+              <span class="agent-btn-icon" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              </span>
+              Appeler
+              <span class="agent-btn-num">+33 6 58 71 44 80</span>
+            </a>
+            <a class="agent-btn secondary" href="https://wa.me/33658714480" target="_blank" rel="noopener">
+              <span class="agent-btn-icon" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A7.85 7.85 0 0 0 12.05 4a7.94 7.94 0 0 0-6.88 11.9L4 20l4.22-1.11a7.93 7.93 0 0 0 3.82.97h.01a7.94 7.94 0 0 0 7.94-7.94 7.88 7.88 0 0 0-2.39-5.6zM12.05 18.5h-.01a6.6 6.6 0 0 1-3.36-.92l-.24-.14-2.5.66.67-2.44-.16-.25a6.6 6.6 0 0 1-1.01-3.51 6.6 6.6 0 0 1 11.27-4.66 6.55 6.55 0 0 1 1.93 4.66 6.6 6.6 0 0 1-6.59 6.6zm3.61-4.94c-.2-.1-1.17-.58-1.35-.64-.18-.07-.31-.1-.45.1-.13.2-.5.64-.62.77-.11.13-.23.15-.43.05a5.4 5.4 0 0 1-1.6-.99 6 6 0 0 1-1.1-1.38c-.12-.2 0-.31.09-.41l.3-.34c.1-.12.13-.2.2-.33.06-.13.03-.25-.02-.35l-.6-1.46c-.16-.39-.32-.34-.45-.34h-.39c-.13 0-.35.05-.53.25s-.7.69-.7 1.67.72 1.94.82 2.07c.1.13 1.41 2.16 3.42 3.03.48.2.85.32 1.14.42.48.15.91.13 1.26.08.38-.06 1.17-.48 1.34-.94.16-.46.16-.85.12-.94-.05-.08-.18-.13-.38-.23z"/></svg>
+              </span>
+              WhatsApp
+            </a>
+          </div>
+        </div>
+        <div class="agent">
+          <div class="role">Représentante des ventes</div>
+          <div class="name">Caroline Raoux</div>
+          <div class="agent-actions">
+            <a class="agent-btn primary" href="tel:+33683385056">
+              <span class="agent-btn-icon" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              </span>
+              Appeler
+              <span class="agent-btn-num">+33 6 83 38 50 56</span>
+            </a>
+            <a class="agent-btn secondary" href="https://wa.me/33683385056" target="_blank" rel="noopener">
+              <span class="agent-btn-icon" aria-hidden="true">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A7.85 7.85 0 0 0 12.05 4a7.94 7.94 0 0 0-6.88 11.9L4 20l4.22-1.11a7.93 7.93 0 0 0 3.82.97h.01a7.94 7.94 0 0 0 7.94-7.94 7.88 7.88 0 0 0-2.39-5.6zM12.05 18.5h-.01a6.6 6.6 0 0 1-3.36-.92l-.24-.14-2.5.66.67-2.44-.16-.25a6.6 6.6 0 0 1-1.01-3.51 6.6 6.6 0 0 1 11.27-4.66 6.55 6.55 0 0 1 1.93 4.66 6.6 6.6 0 0 1-6.59 6.6zm3.61-4.94c-.2-.1-1.17-.58-1.35-.64-.18-.07-.31-.1-.45.1-.13.2-.5.64-.62.77-.11.13-.23.15-.43.05a5.4 5.4 0 0 1-1.6-.99 6 6 0 0 1-1.1-1.38c-.12-.2 0-.31.09-.41l.3-.34c.1-.12.13-.2.2-.33.06-.13.03-.25-.02-.35l-.6-1.46c-.16-.39-.32-.34-.45-.34h-.39c-.13 0-.35.05-.53.25s-.7.69-.7 1.67.72 1.94.82 2.07c.1.13 1.41 2.16 3.42 3.03.48.2.85.32 1.14.42.48.15.91.13 1.26.08.38-.06 1.17-.48 1.34-.94.16-.46.16-.85.12-.94-.05-.08-.18-.13-.38-.23z"/></svg>
+              </span>
+              WhatsApp
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="contact-secondary">
+        <a href="mailto:private.viewings@azurea.fr" class="contact-email">private.viewings@azurea.fr</a>
+        <span class="contact-divider"></span>
+        <a href="#" class="contact-brochure">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download brochure (PDF)
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>AZURÉA</span> &nbsp; · &nbsp; Mougins, France &nbsp; · &nbsp; © 2026 — All rights reserved
+</footer>
+
+<!-- ============ JS ============ -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  // ----- NAV scroll state -----
+  const nav = document.getElementById('nav');
+  const onScroll = () => {
+    if (window.scrollY > 60) nav.classList.add('scrolled');
+    else nav.classList.remove('scrolled');
+
+    // Hero parallax — subtle
+    const heroBg = document.getElementById('heroBg');
+    if (heroBg) {
+      const y = Math.min(window.scrollY * 0.35, 200);
+      heroBg.style.transform = `scale(1.06) translateY(${y}px)`;
+    }
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Mobile menu
+  document.getElementById('burger').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+  document.querySelectorAll('#navLinks a').forEach(a =>
+    a.addEventListener('click', () => document.getElementById('navLinks').classList.remove('open'))
+  );
+
+  // ----- Reveal on scroll -----
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // ----- LEAFLET MAP -----
+  const VILLA = [43.5856, 6.9990]; // Mougins area
+  const POIs = [
+    { name: "Villa Azuréa",        coord: VILLA,            dist: "—",              desc: "The estate, set within an exclusive private gated community.", villa: true },
+    { name: "Mougins Village",     coord: [43.6004, 7.0050], dist: "1 km · 3 min",   desc: "The historic perched village of Mougins, beloved by artists and gourmets." },
+    { name: "Cannes & La Croisette", coord: [43.5513, 7.0128], dist: "8 km · 15 min",  desc: "The Bay of Cannes, the Croisette and the Palais des Festivals." },
+    { name: "Antibes / Cap d'Antibes", coord: [43.5808, 7.1239], dist: "15 km · 22 min", desc: "Old town, Picasso Museum and the legendary Cap d'Antibes." },
+    { name: "Grasse",              coord: [43.6584, 6.9225], dist: "15 km · 22 min", desc: "World capital of perfume, set in the foothills of the Alps." },
+    { name: "Sophia Antipolis",    coord: [43.6217, 7.0498], dist: "6 km · 12 min",  desc: "Europe's largest technology park and business district." },
+    { name: "Nice Côte d'Azur Airport", coord: [43.6584, 7.2158], dist: "25 km · 25 min", desc: "International airport with daily flights worldwide." },
+    { name: "Monaco",              coord: [43.7384, 7.4246], dist: "55 km · 50 min", desc: "The Principality, Monte-Carlo Casino and superyacht marina." },
+    { name: "Saint-Tropez",        coord: [43.2727, 6.6407], dist: "85 km · 1h30",   desc: "The iconic Mediterranean port and beach destination." }
+  ];
+
+  const map = L.map('map', { scrollWheelZoom: false, zoomControl: true }).setView(VILLA, 11);
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap &copy; CARTO',
+    maxZoom: 19
+  }).addTo(map);
+
+  const poiList = document.getElementById('poiList');
+  const markers = [];
+
+  POIs.forEach((poi, i) => {
+    const li = document.createElement('li');
+    li.dataset.idx = i;
+    li.innerHTML = `
+      <span class="poi-name">${poi.name}</span>
+      <span class="poi-dist">${poi.dist}</span>
+      <span class="poi-desc">${poi.desc}</span>
+    `;
+    poiList.appendChild(li);
+
+    const icon = poi.villa
+      ? L.divIcon({ html: '<div class="villa-marker">A</div>', className: '', iconSize: [44, 44], iconAnchor: [22, 22] })
+      : L.divIcon({ html: '<div class="poi-marker"></div>', className: '', iconSize: [14, 14], iconAnchor: [7, 7] });
+
+    const m = L.marker(poi.coord, { icon }).addTo(map);
+    m.bindPopup(`<b>${poi.name}</b><br/><span style="font-size:12px;color:#6b7280;">${poi.dist}</span>`);
+    markers.push(m);
+
+    li.addEventListener('click', () => activatePOI(i));
+    m.on('click', () => activatePOI(i));
+  });
+
+  function activatePOI(i) {
+    document.querySelectorAll('#poiList li').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('#poiList li')[i].classList.add('active');
+    map.flyTo(POIs[i].coord, i === 0 ? 14 : 12, { duration: 0.8 });
+    markers[i].openPopup();
+  }
+
+  setTimeout(() => activatePOI(0), 600);
+
+  // ----- GALLERY REEL CONTROLS -----
+  const reel = document.getElementById('reel');
+  const reelPrev = document.getElementById('reelPrev');
+  const reelNext = document.getElementById('reelNext');
+  const reelIdx = document.getElementById('reelIdx');
+  const reelProgress = document.getElementById('reelProgress');
+  const reelFigures = Array.from(reel.querySelectorAll('figure'));
+
+  function updateReelState() {
+    const max = reel.scrollWidth - reel.clientWidth;
+    const ratio = max > 0 ? reel.scrollLeft / max : 0;
+    // Find figure closest to viewport center
+    const center = reel.scrollLeft + reel.clientWidth / 2;
+    let nearest = 0, nearestDist = Infinity;
+    reelFigures.forEach((f, i) => {
+      const c = f.offsetLeft + f.offsetWidth / 2;
+      const d = Math.abs(c - center);
+      if (d < nearestDist) { nearestDist = d; nearest = i; }
+    });
+    reelIdx.textContent = String(nearest + 1).padStart(2, '0');
+    reelProgress.style.setProperty('--reel-progress', `${Math.max(8, ratio * 100)}%`);
+    reelPrev.disabled = reel.scrollLeft <= 4;
+    reelNext.disabled = reel.scrollLeft >= max - 4;
+  }
+  function reelScrollBy(dir) {
+    // Jump roughly one card width
+    const w = reel.clientWidth * 0.6;
+    reel.scrollBy({ left: dir * w, behavior: 'smooth' });
+  }
+  reelPrev.addEventListener('click', () => reelScrollBy(-1));
+  reelNext.addEventListener('click', () => reelScrollBy(1));
+  reel.addEventListener('scroll', updateReelState, { passive: true });
+  window.addEventListener('resize', updateReelState);
+  updateReelState();
+
+  // ----- GALLERY LIGHTBOX -----
+  const figures = Array.from(document.querySelectorAll('#reel figure'));
+  const lb = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lbImg');
+  const lbCounter = document.getElementById('lbCounter');
+  let lbIndex = 0;
+
+  function openLB(i) {
+    lbIndex = i;
+    const src = figures[i].querySelector('img').src;
+    lbImg.src = src;
+    lbImg.alt = figures[i].querySelector('img').alt;
+    lbCounter.textContent = `${i + 1} / ${figures.length}`;
+    lb.classList.add('open');
+  }
+  function closeLB() { lb.classList.remove('open'); }
+  function nextLB(d) { lbIndex = (lbIndex + d + figures.length) % figures.length; openLB(lbIndex); }
+
+  figures.forEach((f, i) => f.addEventListener('click', () => openLB(i)));
+  document.getElementById('lbClose').addEventListener('click', closeLB);
+  document.getElementById('lbPrev').addEventListener('click', () => nextLB(-1));
+  document.getElementById('lbNext').addEventListener('click', () => nextLB(1));
+  lb.addEventListener('click', (e) => { if (e.target === lb) closeLB(); });
+  document.addEventListener('keydown', (e) => {
+    if (!lb.classList.contains('open')) return;
+    if (e.key === 'Escape') closeLB();
+    if (e.key === 'ArrowRight') nextLB(1);
+    if (e.key === 'ArrowLeft') nextLB(-1);
+  });
+</script>
+</body>
+</html>
