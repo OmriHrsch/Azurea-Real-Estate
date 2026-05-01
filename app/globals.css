@@ -4,10 +4,40 @@
   padding: 0;
 }
 
+:root {
+  --navy: #0a1a2e;
+  --navy-deep: #050d1a;
+  --gold: #b89968;
+  --paper: #fbf9f4;
+  --paper-warm: #fafaf7;
+  --paper-cool: #f4f5f7;
+  --muted: #6b7280;
+  --line: rgba(10, 26, 46, 0.12);
+}
+
 body {
-  background-color: #fcf9f4;
-  color: #1c1c19;
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  color: var(--navy);
+  background: var(--paper);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 1s ease, transform 1s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    transition: opacity 0.3s;
+    transform: none;
+  }
 }
