@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocale, type Locale } from "@/lib/i18n";
 import styles from "./Navbar.module.css";
 
@@ -18,11 +18,24 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { locale, setLocale, t } = useLocale();
 
+  const rafRef = useRef<number>(0);
+  const isScheduled = useRef(false);
+
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 60);
+    const handleScroll = () => {
+      if (isScheduled.current) return;
+      isScheduled.current = true;
+      rafRef.current = requestAnimationFrame(() => {
+        isScheduled.current = false;
+        setScrolled(window.scrollY > 60);
+      });
+    };
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      cancelAnimationFrame(rafRef.current);
+    };
   }, []);
 
   return (
