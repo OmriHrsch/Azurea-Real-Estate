@@ -63,6 +63,8 @@ export default function About() {
             src={photo("Azurea-2.JPG")}
             alt={t("about.imageAlt")}
             fill
+            sizes="100vw"
+            priority
             className={styles.image}
           />
         </div>

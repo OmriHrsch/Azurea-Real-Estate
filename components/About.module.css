@@ -131,6 +131,12 @@
     gap: 40px;
   }
 
+  parallaxBlock {
+    margin-top: 64px;
+    height: 50vh;
+    min-height: 380px;
+  }
+
   .parallaxImg {
     inset: 0;
   }
