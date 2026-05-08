@@ -1,5 +1,3 @@
-"use client";
-
 import { useRef, useEffect } from "react";
 import Image from "next/image";
 import { useLocale } from "@/lib/i18n";
@@ -17,7 +15,9 @@ export default function About() {
   useReveal(containerRef);
 
   useEffect(() => {
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const prefersReduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
     const isMobile = window.matchMedia("(max-width: 960px)").matches;
     if (prefersReduced || isMobile) return;
 
@@ -26,7 +26,9 @@ export default function About() {
       rafRef.current = requestAnimationFrame(() => {
         if (!parallaxBlockRef.current || !parallaxImgRef.current) return;
         const rect = parallaxBlockRef.current.getBoundingClientRect();
-        const ratio = (rect.top + rect.height / 2 - window.innerHeight / 2) / window.innerHeight;
+        const ratio =
+          (rect.top + rect.height / 2 - window.innerHeight / 2) /
+          window.innerHeight;
         parallaxImgRef.current.style.transform = `translateY(${ratio * -60}px)`;
       });
     };
@@ -41,11 +43,11 @@ export default function About() {
   return (
     <section id="about" ref={containerRef} className={styles.about}>
       <div className={styles.grid}>
-        <div className={`${styles.left} reveal`}>
+        <div className="reveal">
           <p className={styles.eyebrow}>{t("about.eyebrow")}</p>
           <h2 className={styles.title}>{t("about.title")}</h2>
         </div>
-        <div className={`${styles.right} reveal`}>
+        <div className="reveal">
           <p className={styles.lede}>{t("about.lede")}</p>
           <hr className={styles.rule} />
           <p className={styles.body}>{t("about.body1")}</p>
