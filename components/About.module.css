@@ -70,7 +70,6 @@
 .parallaxImg {
   position: absolute;
   inset: 0;
-  will-change: transform;
   transform: scale(1.25) translateY(0px);
 }
 
@@ -141,7 +140,6 @@
   .parallaxImg {
     inset: 0;
     transform: none;
-    will-change: auto;
   }
 
   .quoteWrap {
