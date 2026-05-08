@@ -1,178 +1,153 @@
-/* ─── Section container ──────────────────────────────────────────────────── */
+/* ─── Section ────────────────────────────────────────────────────────────── */
 
-.estateGallery {
+.estate {
   position: relative;
+  height: 260vh;
   width: 100%;
+  background: #fcf9f4;
 }
 
-/* ─── Individual panel ───────────────────────────────────────────────────── */
+/* ─── Photo strip ────────────────────────────────────────────────────────── */
 
-.panel {
-  position: relative;
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
-}
-
-/* ─── Image wrapper — 140vh tall, translated by parallax ─────────────────── */
-
-.imageWrapper {
+.photoStrip {
   position: absolute;
   inset: 0;
-  top: -20vh;
-  bottom: -20vh;
-  will-change: transform;
-}
-
-/* ─── Next.js fill image ─────────────────────────────────────────────────── */
-
-.panelImage {
-  object-fit: cover;
-  object-position: center;
-}
-
-/* ─── Gradient overlay ───────────────────────────────────────────────────── */
-
-.panelOverlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(10, 9, 8, 0.6) 0%,
-    rgba(10, 9, 8, 0.12) 40%,
-    transparent 70%
-  );
   z-index: 1;
   pointer-events: none;
 }
 
-/* ─── Caption ────────────────────────────────────────────────────────────── */
-
-.panelCaption {
+/*
+ * Photos are 56vh tall, placed every 36vh — creating a 20vh (~180px) overlap
+ * between consecutive images in the zigzag.
+ * Position (top) is set via inline style: calc(i * 36vh).
+ */
+.photoSlot {
   position: absolute;
-  bottom: 48px;
-  left: 64px;
-  right: 64px;
-  z-index: 2;
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: 18px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: rgba(255, 255, 255, 0.88);
-  letter-spacing: 0.01em;
-  max-width: 560px;
-  margin: 0;
+  width: 50vw;
+  height: 56vh;
 }
 
-/* ─── Section label (vertical, top-left) ────────────────────────────────── */
+.photoLeft  { left: 0; }
+.photoRight { right: 0; }
 
-.sectionLabel {
-  position: absolute;
-  top: 48px;
-  left: 64px;
-  z-index: 10;
-  writing-mode: vertical-rl;
-  text-orientation: mixed;
-  transform: rotate(180deg);
+.photo {
+  object-fit: cover;
+  object-position: center;
+}
+
+/* ─── Sticky layer — height: 0 so it sticks for the full section scroll ──── */
+
+.stickyLayer {
+  position: sticky;
+  top: 0;
+  height: 0;
+  overflow: visible;
+  z-index: 5;
   pointer-events: none;
 }
 
-.sectionLabelText {
+/*
+ * textStack is absolutely positioned relative to the sticky layer's top edge.
+ * Since sticky keeps the layer at viewport top (y=0), top: 50vh + translateY(-50%)
+ * centers the card in the viewport at all times.
+ */
+.textStack {
+  position: absolute;
+  top: 50vh;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 380px;
+  pointer-events: none;
+}
+
+/* ─── Frosted glass text card ────────────────────────────────────────────── */
+
+.textCard {
+  position: absolute;
+  inset: 0;
+  width: 380px;
+  padding: 44px 40px 40px;
+  background: rgba(252, 249, 244, 0.84);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(196, 188, 178, 0.45);
+  box-shadow:
+    0 4px 40px rgba(28, 28, 25, 0.07),
+    0 1px 4px rgba(28, 28, 25, 0.04);
+
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events: none;
+}
+
+.textCardActive {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* ─── Card typography ────────────────────────────────────────────────────── */
+
+.cardEyebrow {
+  display: block;
   font-family: var(--font-sans);
   font-size: 10px;
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.5);
+  color: #7b766f;
+  margin-bottom: 20px;
 }
 
-/* ─── Vertical progress bar (fixed) ─────────────────────────────────────── */
-
-.progressBar {
-  position: fixed;
-  right: 32px;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 50;
-  width: 1px;
-  height: 120px;
-  background: rgba(255, 255, 255, 0.18);
-  pointer-events: none;
-}
-
-.progressFill {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background: rgba(255, 255, 255, 0.8);
-  transition: height 0.4s ease;
-}
-
-/* ─── Panel counter (fixed) ──────────────────────────────────────────────── */
-
-.panelCounter {
-  position: fixed;
-  right: 48px;
-  bottom: 40px;
-  z-index: 50;
-  display: flex;
-  align-items: baseline;
-  gap: 4px;
-  pointer-events: none;
-}
-
-.panelCurrent {
+.cardTitle {
   font-family: var(--font-serif);
   font-size: 28px;
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.9);
-  line-height: 1;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: #1c1c19;
+  margin: 0 0 16px;
 }
 
-.panelSep {
+.cardBody {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.75;
+  color: #4a4640;
+  margin: 0;
+}
+
+.cardCounter {
+  position: absolute;
+  bottom: 24px;
+  right: 32px;
   font-family: var(--font-sans);
   font-size: 10px;
-  color: rgba(255, 255, 255, 0.3);
-  letter-spacing: 0.05em;
-  margin: 0 2px;
-}
-
-.panelTotal {
-  font-family: var(--font-serif);
-  font-size: 14px;
-  font-weight: 400;
-  color: rgba(255, 255, 255, 0.4);
-  line-height: 1;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: #ccc5bd;
 }
 
 /* ─── Responsive ─────────────────────────────────────────────────────────── */
 
 @media (max-width: 768px) {
-  .panelCaption {
-    bottom: 32px;
-    left: 24px;
-    right: 24px;
-    font-size: 16px;
+  .photoSlot {
+    width: 75vw;
+    height: 42vh;
   }
 
-  .sectionLabel {
-    top: 32px;
-    left: 24px;
+  .textStack {
+    width: calc(100vw - 48px);
   }
 
-  .progressBar {
-    right: 16px;
-    height: 80px;
+  .textCard {
+    width: 100%;
+    padding: 32px 28px 36px;
   }
 
-  .panelCounter {
-    right: 24px;
-    bottom: 24px;
-  }
-
-  .panelCurrent {
+  .cardTitle {
     font-size: 22px;
   }
 }
@@ -180,13 +155,8 @@
 /* ─── Reduced motion ─────────────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
-  .imageWrapper {
-    will-change: auto;
-    top: 0;
-    bottom: 0;
-  }
-
-  .progressFill {
-    transition: none;
+  .textCard {
+    transition: opacity 0.2s ease;
+    transform: translateY(0);
   }
 }

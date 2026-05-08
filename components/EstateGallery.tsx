@@ -1,159 +1,138 @@
 "use client";
 
-import {
-  useEffect,
-  useRef,
-  useState,
-  useCallback,
-} from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import Image from "next/image";
 import { useLocale } from "@/lib/i18n";
 import { photo } from "@/lib/media";
 import styles from "./EstateGallery.module.css";
 
 const PANELS = [
-  { file: "Azurea-2.JPG",  captionKey: "estate.panel1.caption" as const },
-  { file: "Azurea-12.JPG", captionKey: "estate.panel2.caption" as const },
-  { file: "Azurea-20.JPG", captionKey: "estate.panel3.caption" as const },
-  { file: "Azurea-30.JPG", captionKey: "estate.panel4.caption" as const },
-  { file: "Azurea-46.JPG", captionKey: "estate.panel5.caption" as const },
-  { file: "Azurea-49.JPG", captionKey: "estate.panel6.caption" as const },
+  {
+    file: "Azurea-2.JPG",
+    title: "estate.section1.title",
+    body: "estate.section1.body",
+    alt: "estate.section1.alt",
+  },
+  {
+    file: "Azurea-12.JPG",
+    title: "estate.section2.title",
+    body: "estate.section2.body",
+    alt: "estate.section2.alt",
+  },
+  {
+    file: "Azurea-20.JPG",
+    title: "estate.section3.title",
+    body: "estate.section3.body",
+    alt: "estate.section3.alt",
+  },
+  {
+    file: "Azurea-30.JPG",
+    title: "estate.section4.title",
+    body: "estate.section4.body",
+    alt: "estate.section4.alt",
+  },
+  {
+    file: "Azurea-46.JPG",
+    title: "estate.section5.title",
+    body: "estate.section5.body",
+    alt: "estate.section5.alt",
+  },
+  {
+    file: "Azurea-49.JPG",
+    title: "estate.section6.title",
+    body: "estate.section6.body",
+    alt: "estate.section6.alt",
+  },
 ] as const;
+
+// Photos are 56vh tall, placed every 36vh → 20vh overlap between consecutive images.
+// Total photo spread: 5 * 36vh + 56vh = 236vh, inside a 260vh section.
+const PHOTO_STEP_VH = 36;
+// Zone for text: each section occupies one photo step worth of scroll depth.
+const ZONE_VH = PHOTO_STEP_VH;
 
 export default function EstateGallery() {
   const { t } = useLocale();
 
   const sectionRef = useRef<HTMLElement>(null);
-  const panelRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
   const rafRef = useRef<number>(0);
   const isScheduled = useRef(false);
 
-  const [activePanel, setActivePanel] = useState(0);
-  const [inView, setInView] = useState(false);
+  const [activeSection, setActiveSection] = useState(0);
 
-  const updateParallax = useCallback(() => {
+  const updateActiveSection = useCallback(() => {
     isScheduled.current = false;
-    const scrollY = window.scrollY;
-    const overflowPx = window.innerHeight * 0.2;
+    if (!sectionRef.current) return;
 
-    panelRefs.current.forEach((panel, i) => {
-      const img = imageRefs.current[i];
-      if (!panel || !img) return;
-      const panelTop = panel.getBoundingClientRect().top + scrollY;
-      const relPos = scrollY - panelTop;
-      const translateY = relPos * 0.35 - overflowPx;
-      img.style.transform = `translateY(${translateY}px)`;
-    });
+    const rect = sectionRef.current.getBoundingClientRect();
+    const scrolled = -rect.top;
+    if (scrolled < 0) return;
+
+    const vh = window.innerHeight;
+    const zoneHeightPx = (ZONE_VH / 100) * vh;
+    const idx = Math.min(
+      PANELS.length - 1,
+      Math.max(0, Math.floor(scrolled / zoneHeightPx))
+    );
+    setActiveSection(idx);
   }, []);
 
   const onScroll = useCallback(() => {
     if (isScheduled.current) return;
     isScheduled.current = true;
-    rafRef.current = requestAnimationFrame(updateParallax);
-  }, [updateParallax]);
+    rafRef.current = requestAnimationFrame(updateActiveSection);
+  }, [updateActiveSection]);
 
-  // Parallax engine
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-    updateParallax();
+    updateActiveSection();
     window.addEventListener("scroll", onScroll, { passive: true });
-
-    const ro = new ResizeObserver(() => updateParallax());
-    if (sectionRef.current) ro.observe(sectionRef.current);
-
     return () => {
       window.removeEventListener("scroll", onScroll);
-      ro.disconnect();
       cancelAnimationFrame(rafRef.current);
     };
-  }, [onScroll, updateParallax]);
-
-  // Active panel tracker
-  useEffect(() => {
-    const observers: IntersectionObserver[] = [];
-    panelRefs.current.forEach((panel, i) => {
-      if (!panel) return;
-      const obs = new IntersectionObserver(
-        ([entry]) => {
-          if (entry.isIntersecting) setActivePanel(i);
-        },
-        { threshold: 0.5 }
-      );
-      obs.observe(panel);
-      observers.push(obs);
-    });
-    return () => observers.forEach((o) => o.disconnect());
-  }, []);
-
-  // Section visibility (for fixed overlays)
-  useEffect(() => {
-    if (!sectionRef.current) return;
-    const obs = new IntersectionObserver(
-      ([entry]) => setInView(entry.isIntersecting),
-      { threshold: 0 }
-    );
-    obs.observe(sectionRef.current);
-    return () => obs.disconnect();
-  }, []);
+  }, [onScroll, updateActiveSection]);
 
   return (
-    <section id="estate" ref={sectionRef} className={styles.estateGallery}>
-      {inView && (
-        <div className={styles.progressBar} aria-hidden="true">
+    <section id="estate" ref={sectionRef} className={styles.estate}>
+      {/* Photos — statically placed in zigzag, appearing naturally as user scrolls */}
+      <div className={styles.photoStrip} aria-hidden="true">
+        {PANELS.map(({ file, alt }, i) => (
           <div
-            className={styles.progressFill}
-            style={{ height: `${((activePanel + 1) / PANELS.length) * 100}%` }}
-          />
-        </div>
-      )}
-
-      {inView && (
-        <div className={styles.panelCounter} aria-hidden="true">
-          <span className={styles.panelCurrent}>
-            {String(activePanel + 1).padStart(2, "0")}
-          </span>
-          <span className={styles.panelSep}>/</span>
-          <span className={styles.panelTotal}>
-            {String(PANELS.length).padStart(2, "0")}
-          </span>
-        </div>
-      )}
-
-      <div className={styles.sectionLabel} aria-hidden="true">
-        <span className={styles.sectionLabelText}>{t("estate.label")}</span>
-      </div>
-
-      {PANELS.map(({ file, captionKey }, i) => (
-        <div
-          key={file}
-          className={styles.panel}
-          ref={(el) => {
-            panelRefs.current[i] = el;
-          }}
-        >
-          <div
-            className={styles.imageWrapper}
-            ref={(el) => {
-              imageRefs.current[i] = el;
-            }}
+            key={file}
+            className={`${styles.photoSlot} ${i % 2 === 0 ? styles.photoLeft : styles.photoRight}`}
+            style={{ top: `calc(${i} * ${PHOTO_STEP_VH}vh)` }}
           >
             <Image
               src={photo(file)}
-              alt={t(captionKey)}
+              alt={t(alt)}
               fill
-              sizes="100vw"
-              className={styles.panelImage}
-              priority={i === 0}
+              sizes="50vw"
+              className={styles.photo}
+              priority={i < 2}
             />
           </div>
+        ))}
+      </div>
 
-          <div className={styles.panelOverlay} />
-
-          <p className={styles.panelCaption}>{t(captionKey)}</p>
+      {/* Sticky text column — height:0 so it sticks for the full section */}
+      <div className={styles.stickyLayer}>
+        <div className={styles.textStack}>
+          {PANELS.map(({ title, body }, i) => (
+            <div
+              key={i}
+              className={`${styles.textCard} ${activeSection === i ? styles.textCardActive : ""}`}
+            >
+              <span className={styles.cardEyebrow}>{t("estate.label")}</span>
+              <h2 className={styles.cardTitle}>{t(title)}</h2>
+              <p className={styles.cardBody}>{t(body)}</p>
+              <span className={styles.cardCounter}>
+                {String(i + 1).padStart(2, "0")} /{" "}
+                {String(PANELS.length).padStart(2, "0")}
+              </span>
+            </div>
+          ))}
         </div>
-      ))}
+      </div>
     </section>
   );
 }
