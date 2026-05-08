@@ -31,7 +31,7 @@ export default function About() {
         const ratio =
           (rect.top + rect.height / 2 - window.innerHeight / 2) /
           window.innerHeight;
-        parallaxImgRef.current.style.transform = `translateY(${ratio * -60}px)`;
+        parallaxImgRef.current.style.transform = `scale(1.25) translateY(${ratio * -48}px)`;
       });
     };
 
