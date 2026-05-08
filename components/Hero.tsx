@@ -13,7 +13,9 @@ export default function Hero() {
   const rafRef = useRef<number>(0);
 
   useEffect(() => {
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const prefersReduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
     if (prefersReduced) return;
 
     const handleScroll = () => {
@@ -44,7 +46,7 @@ export default function Hero() {
           video.pause();
         }
       },
-      { threshold: 0 }
+      { threshold: 0 },
     );
 
     observer.observe(video);
