@@ -46,7 +46,7 @@
   transform: translateX(-50%);
   width: 1px;
   height: 56px;
-  background: linear-gradient(to bottom, #ffffff, transparent);
+  background: linear-gradient(to bottom, var(--paper), transparent);
   z-index: 3;
   animation: drop 2.4s ease-in-out infinite;
   transform-origin: top center;
