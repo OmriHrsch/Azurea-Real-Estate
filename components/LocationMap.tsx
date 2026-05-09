@@ -25,7 +25,9 @@ interface PointOfInterest {
   isVilla?: boolean;
 }
 
-const VILLA_COORDINATES: [number, number] = [43.5856, 6.999];
+const VILLA_COORDINATES: [number, number] = [
+  43.57256946748973, 6.969992886647874,
+];
 
 const POINTS_OF_INTEREST: PointOfInterest[] = [
   {
@@ -85,7 +87,10 @@ const POINTS_OF_INTEREST: PointOfInterest[] = [
   },
 ];
 
-function createPopupContent(point: PointOfInterest, t: (key: TranslationKey) => string): string {
+function createPopupContent(
+  point: PointOfInterest,
+  t: (key: TranslationKey) => string,
+): string {
   return `<strong>${t(point.nameKey)}</strong><span>${point.dist}</span><p>${t(point.descKey)}</p>`;
 }
 
@@ -104,7 +109,10 @@ export default function LocationMap() {
   const [activePoiIndex, setActivePoiIndex] = useState(0);
   const [selectionVersion, setSelectionVersion] = useState(0);
 
-  function activatePointOfInterest(index: number, source: ActivationSource): void {
+  function activatePointOfInterest(
+    index: number,
+    source: ActivationSource,
+  ): void {
     activationSourceRef.current = source;
     setActivePoiIndex(index);
     setSelectionVersion((version) => version + SELECTION_VERSION_INCREMENT);

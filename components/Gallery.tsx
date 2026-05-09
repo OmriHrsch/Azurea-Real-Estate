@@ -57,8 +57,10 @@ export default function Gallery() {
       const closestIndex = figures.reduce((closest, figure, index) => {
         const figureCenter = figure.offsetLeft + figure.offsetWidth / 2;
         const closestFigure = figures[closest];
-        const closestCenter = closestFigure.offsetLeft + closestFigure.offsetWidth / 2;
-        return Math.abs(figureCenter - reelCenter) < Math.abs(closestCenter - reelCenter)
+        const closestCenter =
+          closestFigure.offsetLeft + closestFigure.offsetWidth / 2;
+        return Math.abs(figureCenter - reelCenter) <
+          Math.abs(closestCenter - reelCenter)
           ? index
           : closest;
       }, FIRST_INDEX);
@@ -188,7 +190,9 @@ export default function Gallery() {
             type="button"
             className={`${styles.lightboxButton} ${styles.lightboxPrev}`}
             onClick={() =>
-              setLightboxIndex((activeLightboxIndex - 1 + CARDS.length) % CARDS.length)
+              setLightboxIndex(
+                (activeLightboxIndex - 1 + CARDS.length) % CARDS.length,
+              )
             }
             aria-label={t("gallery.previous")}
           >
@@ -204,7 +208,9 @@ export default function Gallery() {
           <button
             type="button"
             className={`${styles.lightboxButton} ${styles.lightboxNext}`}
-            onClick={() => setLightboxIndex((activeLightboxIndex + 1) % CARDS.length)}
+            onClick={() =>
+              setLightboxIndex((activeLightboxIndex + 1) % CARDS.length)
+            }
             aria-label={t("gallery.next")}
           >
             →
