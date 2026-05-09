@@ -65,19 +65,9 @@
   min-height: 480px;
   position: relative;
   overflow: hidden;
-}
-
-.parallaxImg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  transform: scale(1.25) translateY(0px);
-}
-
-.image {
-  object-fit: cover;
-  object-position: center;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
 }
 
 .parallaxOverlay {
@@ -109,7 +99,7 @@
   font-weight: 300;
   font-style: italic;
   line-height: 1.5;
-  color: #ffffff;
+  color: var(--paper);
   max-width: 820px;
   margin: 0 0 16px;
 }
@@ -120,7 +110,7 @@
   font-weight: 500;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.55);
+  color: color-mix(in srgb, var(--paper) 55%, transparent);
 }
 
 @media (max-width: 960px) {
@@ -137,11 +127,7 @@
     margin-top: 64px;
     height: 50vh;
     min-height: 380px;
-  }
-
-  .parallaxImg {
-    inset: 0;
-    transform: none;
+    background-attachment: scroll;
   }
 
   .quoteWrap {
