@@ -1,0 +1,265 @@
+.gallery {
+  overflow: hidden;
+  background: var(--paper);
+  padding: 130px 0;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  gap: 48px;
+  align-items: end;
+  max-width: 1280px;
+  margin: 0 auto 72px;
+  padding: 0 48px;
+}
+
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 0 0 24px;
+}
+
+.title {
+  font-family: var(--font-serif);
+  font-size: clamp(36px, 4vw, 52px);
+  font-weight: 300;
+  line-height: 1.15;
+  color: var(--navy);
+  margin: 0;
+  white-space: pre-line;
+}
+
+.meta {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 11px;
+  white-space: nowrap;
+}
+
+.reel {
+  display: flex;
+  gap: 18px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 0 48px 36px;
+  scrollbar-width: none;
+}
+
+.reel::-webkit-scrollbar {
+  display: none;
+}
+
+.card {
+  position: relative;
+  flex: 0 0 auto;
+  height: 520px;
+  overflow: hidden;
+  scroll-snap-align: center;
+  cursor: zoom-in;
+  background: var(--paper-cool);
+}
+
+.portrait {
+  width: 360px;
+}
+
+.landscape {
+  width: 720px;
+}
+
+.square {
+  width: 520px;
+}
+
+.image {
+  object-fit: cover;
+  transition: transform 1.2s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+.card:hover .image {
+  transform: scale(1.04);
+}
+
+.caption {
+  position: absolute;
+  left: 22px;
+  bottom: 22px;
+  display: grid;
+  gap: 7px;
+  color: var(--paper);
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 16px color-mix(in srgb, var(--navy-deep) 70%, transparent);
+}
+
+.number {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0;
+  color: var(--gold);
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 48px;
+}
+
+.controlButton,
+.lightboxButton {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  color: var(--navy);
+  cursor: pointer;
+  transition:
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease,
+    opacity 0.25s ease;
+}
+
+.controlButton:hover:not(:disabled),
+.controlButton:focus-visible {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: var(--paper);
+}
+
+.controlButton:disabled {
+  cursor: default;
+  opacity: 0.28;
+}
+
+.progressTrack {
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+  transform: translateZ(0);
+}
+
+.progressFill {
+  width: 100%;
+  height: 3px;
+  background: var(--navy);
+  transform-origin: left center;
+}
+
+.counter {
+  min-width: 62px;
+  font-family: var(--font-serif);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--navy);
+  margin: 0;
+  text-align: right;
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--navy-deep) 96%, transparent);
+  padding: 32px;
+}
+
+.lightboxImage {
+  width: auto;
+  height: auto;
+  max-width: 92vw;
+  max-height: 88vh;
+  object-fit: contain;
+}
+
+.lightboxButton {
+  position: absolute;
+  border-color: color-mix(in srgb, var(--paper) 28%, transparent);
+  color: var(--paper);
+}
+
+.lightboxButton:hover,
+.lightboxButton:focus-visible {
+  background: color-mix(in srgb, var(--paper) 12%, transparent);
+  outline: none;
+}
+
+.lightboxClose {
+  top: 28px;
+  right: 28px;
+  font-size: 24px;
+}
+
+.lightboxPrev {
+  left: 28px;
+}
+
+.lightboxNext {
+  right: 28px;
+}
+
+@media (max-width: 960px) {
+  .gallery {
+    padding: 80px 0;
+  }
+
+  .header {
+    display: grid;
+    gap: 26px;
+    margin-bottom: 48px;
+    padding: 0 22px;
+  }
+
+  .meta {
+    margin: 0;
+    white-space: normal;
+  }
+
+  .reel {
+    padding: 0 22px 30px;
+  }
+
+  .card {
+    height: 72vw;
+    max-height: 520px;
+  }
+
+  .portrait {
+    width: 64vw;
+  }
+
+  .landscape {
+    width: 86vw;
+  }
+
+  .square {
+    width: 72vw;
+  }
+
+  .controls {
+    padding: 0 22px;
+  }
+}
