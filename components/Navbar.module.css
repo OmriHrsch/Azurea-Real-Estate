@@ -33,12 +33,24 @@
   font-weight: 400;
   letter-spacing: 0.32em;
   color: var(--paper);
+  text-decoration: none;
   white-space: nowrap;
   flex-shrink: 0;
   transition: color 0.4s ease;
 }
 
+.logo:hover,
+.logo:focus-visible {
+  color: var(--paper);
+  outline: none;
+}
+
 .scrolled .logo {
+  color: var(--navy);
+}
+
+.scrolled .logo:hover,
+.scrolled .logo:focus-visible {
   color: var(--navy);
 }
 

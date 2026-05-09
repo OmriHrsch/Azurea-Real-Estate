@@ -9,6 +9,7 @@ const MIN_SCROLL_DURATION_MS = 720;
 const MAX_SCROLL_DURATION_MS = 1300;
 const SCROLL_DURATION_DISTANCE_RATIO = 1.7;
 const NAVBAR_SCROLL_GAP_PX = 18;
+const TOP_OF_PAGE_Y = 0;
 const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)";
 
 const NAV_LINK_KEYS = [
@@ -71,28 +72,15 @@ export default function Navbar() {
     };
   }, []);
 
-  const handleSectionLinkClick = (event: MouseEvent<HTMLAnchorElement>, href: string) => {
-    const target = document.getElementById(href.slice(1));
-    if (!target) {
-      setMenuOpen(false);
-      return;
-    }
-
-    event.preventDefault();
+  const scrollToPosition = (targetY: number, onComplete?: () => void): void => {
     setMenuOpen(false);
     cancelAnimationFrame(scrollAnimationRef.current);
 
     const prefersReducedMotion = window.matchMedia(REDUCED_MOTION_QUERY).matches;
-    const navbarHeight = event.currentTarget.closest("header")?.getBoundingClientRect().height ?? 0;
-    const targetY = Math.max(
-      target.getBoundingClientRect().top + window.scrollY - navbarHeight - NAVBAR_SCROLL_GAP_PX,
-      0,
-    );
 
     if (prefersReducedMotion) {
       window.scrollTo(0, targetY);
-      window.history.pushState(null, "", href);
-      focusSectionTarget(target);
+      onComplete?.();
       return;
     }
 
@@ -116,17 +104,45 @@ export default function Navbar() {
         return;
       }
 
-      window.history.pushState(null, "", href);
-      focusSectionTarget(target);
+      onComplete?.();
     };
 
     scrollAnimationRef.current = requestAnimationFrame(scrollFrame);
   };
 
+  const handleTopLinkClick = (event: MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
+    const pageUrl = `${window.location.pathname}${window.location.search}`;
+    scrollToPosition(TOP_OF_PAGE_Y, () => window.history.pushState(null, "", pageUrl));
+  };
+
+  const handleSectionLinkClick = (event: MouseEvent<HTMLAnchorElement>, href: string) => {
+    const target = document.getElementById(href.slice(1));
+    if (!target) {
+      setMenuOpen(false);
+      return;
+    }
+
+    event.preventDefault();
+
+    const navbarHeight = event.currentTarget.closest("header")?.getBoundingClientRect().height ?? 0;
+    const targetY = Math.max(
+      target.getBoundingClientRect().top + window.scrollY - navbarHeight - NAVBAR_SCROLL_GAP_PX,
+      TOP_OF_PAGE_Y,
+    );
+
+    scrollToPosition(targetY, () => {
+      window.history.pushState(null, "", href);
+      focusSectionTarget(target);
+    });
+  };
+
   return (
     <header className={`${styles.navbar} ${scrolled ? styles.scrolled : ""}`}>
       <div className={styles.navInner}>
-        <span className={styles.logo}>AZURÉA</span>
+        <a href="#" className={styles.logo} aria-label={t("nav.aria.home")} onClick={handleTopLinkClick}>
+          AZURÉA
+        </a>
 
         <nav
           className={`${styles.navLinks} ${menuOpen ? styles.navLinksOpen : ""}`}
