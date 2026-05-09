@@ -1,7 +1,9 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import About from "@/components/About";
-import EstateGallery from "@/components/EstateGallery";
+import Narrative from "@/components/Narrative";
+import FeatureStrip from "@/components/FeatureStrip";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 export default function Home() {
   return (
@@ -9,6 +11,9 @@ export default function Home() {
       <Navbar />
       <Hero />
       <About />
+      <Narrative />
+      <FeatureStrip />
+      <SpeedInsights />
     </>
   );
 }
