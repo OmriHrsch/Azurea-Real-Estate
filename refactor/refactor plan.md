@@ -18,6 +18,7 @@ npm install --save-dev @types/leaflet
 ### 2. `app/layout.tsx` — swap fonts
 
 Replace `Noto_Serif` + `Manrope` with:
+
 - `Cormorant_Garamond`: weights `['300','400','500','600','700']`, styles `['normal','italic']`, variable `--font-serif`
 - `Montserrat`: weights `['300','400','500','600']`, variable `--font-sans`
 
@@ -29,21 +30,44 @@ Replace file content with reset, design tokens, body defaults, and a global `.re
 
 ```css
 :root {
-  --navy: #0a1a2e;  --navy-deep: #050d1a;
-  --gold: #b89968;  --paper: #fbf9f4;
-  --paper-warm: #fafaf7;  --paper-cool: #f4f5f7;
-  --muted: #6b7280;  --line: rgba(10,26,46,0.12);
+  --navy: #0a1a2e;
+  --navy-deep: #050d1a;
+  --gold: #b89968;
+  --paper: #fbf9f4;
+  --paper-warm: #fafaf7;
+  --paper-cool: #f4f5f7;
+  --muted: #6b7280;
+  --line: rgba(10, 26, 46, 0.12);
 }
-body { font-family: var(--font-sans); font-weight: 300; color: var(--navy); background: var(--paper); }
-.reveal { opacity: 0; transform: translateY(30px); transition: opacity 1s ease, transform 1s ease; }
-.reveal.visible { opacity: 1; transform: translateY(0); }
-@media (prefers-reduced-motion: reduce) { .reveal { transition: opacity 0.3s; transform: none; } }
+body {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  color: var(--navy);
+  background: var(--paper);
+}
+.reveal {
+  opacity: 0;
+  transform: translateY(30px);
+  transition:
+    opacity 1s ease,
+    transform 1s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    transition: opacity 0.3s;
+    transform: none;
+  }
+}
 ```
 
 ### 4. `lib/useReveal.ts` — shared hook (new file)
 
 ```ts
-export function useReveal(containerRef: React.RefObject<Element | null>): void
+export function useReveal(containerRef: React.RefObject<Element | null>): void;
 ```
 
 `useEffect` — creates an `IntersectionObserver({ threshold: 0.12 })` that queries all `.reveal` descendants of the container, adds `visible`, then unobserves. Cleanup disconnects. Used by every section component.
@@ -53,6 +77,7 @@ export function useReveal(containerRef: React.RefObject<Element | null>): void
 **State:** `scrolled: boolean` (passive scroll listener, >60px), `menuOpen: boolean`.
 
 **Changes from current:**
+
 - Logo: `AZURÉA`, Cormorant `font-size:26px`, `letter-spacing:0.32em`
 - Default state: `background:transparent`, all text white
 - `.scrolled`: `background:rgba(255,255,255,0.97)`, text `var(--navy)`, `box-shadow:0 1px 0 rgba(10,26,46,0.07)`, padding reduced `22px 48px` → `14px 48px`
@@ -67,6 +92,7 @@ export function useReveal(containerRef: React.RefObject<Element | null>): void
 **Remove:** all h1/subtitle text. Hero is intentionally bare.
 
 **Add:**
+
 - `<video autoPlay muted loop playsInline>` using `VIDEO_URL`; `<Image>` (`Azurea-6.JPG`) as poster/fallback behind the video
 - Overlay gradient: `linear-gradient(180deg, rgba(10,26,46,0.35) 0%, rgba(10,26,46,0.10) 35%, rgba(10,26,46,0.55) 100%)`
 - Scroll indicator: absolute bottom-center, `width:1px; height:56px`, white→transparent, `@keyframes drop` (scaleY 0.4→1→0.4, 2.4s ease-in-out infinite)
@@ -129,18 +155,21 @@ export function useReveal(containerRef: React.RefObject<Element | null>): void
 **CARDS constant** (11 entries): `{ file: PhotoKey; size: 'landscape'|'portrait'|'square'; label: string }[]` — order and labels verbatim from spec.
 
 **Reel:**
+
 - `display:flex; gap:18px; overflow-x:auto; scroll-snap-type:x mandatory; padding:0 48px 36px`; no scrollbar (`scrollbar-width: none`)
 - Card sizes (exact px): `.portrait {width:360px;height:560px}`, `.landscape {width:720px;height:480px}`, `.square {width:520px;height:520px}`
 - Image: `<Image fill>`, hover `transform:scale(1.04)` at `transition:transform 1.2s cubic-bezier(.2,.7,.3,1)`
 - Caption: absolute bottom-left 22px, gold Cormorant number block + white uppercase label
 
 **Controls:**
+
 - ← / → 44px circular buttons (1px border, fills navy on hover), disabled at scroll limits
 - Progress bar: `flex:1; height:1px; background:var(--line)` + inner fill div updated via inline style
 - Counter: Cormorant 14px, `01 / 11` format
 - `scrollBy(dir * clientWidth * 0.6)` on button click
 
 **Lightbox:**
+
 - Conditionally rendered `<div>` when `lightboxIndex !== null`
 - `position:fixed; inset:0; background:rgba(5,13,26,0.96); display:flex; align-items:center; justify-content:center`
 - `<Image>` with `width={1920} height={1080}`, `object-fit:contain; max-width:92vw; max-height:88vh`
@@ -177,6 +206,7 @@ No `"use client"`. Static content, no i18n.
 ### 15. `app/page.tsx` — rewrite
 
 Replace with full 9-section composition:
+
 ```tsx
 <Navbar /> <Hero /> <About /> <Narrative /> <FeatureStrip />
 <Location /> <Gallery /> <Contact /> <Footer />
@@ -193,45 +223,45 @@ No longer referenced after page.tsx is rewritten.
 
 **Keys to UPDATE:**
 
-| Key | New EN value |
-|-----|-------------|
-| `nav.cta` | `"Private Viewing"` |
+| Key             | New EN value                                               |
+| --------------- | ---------------------------------------------------------- |
+| `nav.cta`       | `"Private Viewing"`                                        |
 | `hero.imageAlt` | `"Villa Azuréa — a 600 m² estate above the Bay of Cannes"` |
 
 **Keys to ADD** (keep existing `nav.estate` and `nav.location` — only add new ones):
 
-| Key | EN value |
-|-----|---------|
-| `nav.gallery` | `"Gallery"` |
-| `nav.contact` | `"Contact"` |
-| `about.eyebrow` | `"The Estate"` |
-| `about.title` | `"A 600 m² oasis\nabove the Bay of Cannes."` |
-| `about.lede` | `"Located in Mougins, in the heart of an exclusive private gated community of ten villas including the historic Château de Lérins, Villa Azuréa embodies the French Riviera art of living combined with modern luxury."` |
-| `about.body1` | `"A rare oasis of peace overlooking the Bay of Cannes, the estate is set on 2.1 hectares of landscaped grounds and offers an exceptional 300-degree panoramic view of the sea and surrounding mountains."` |
-| `about.body2` | `"Designed as a complex of three buildings — main house, guest house and pool house — the property combines turnkey contemporary interiors with the warmth and craftsmanship of the Provençal tradition."` |
-| `about.quote` | `"Sea-to-mountain panoramic views, an infinity pool that meets the horizon, and 2.1 hectares of absolute privacy."` |
-| `about.quoteLocation` | `"Mougins · 06250"` |
-| `about.imageAlt` | `"Aerial view of Villa Azuréa over the Bay of Cannes"` |
-| `narrative.eyebrow` | `"The Estate"` |
-| `narrative.para1` | `"In the hills of Mougins — a village that drew Picasso, who made it his home, and welcomed Cocteau, Léger, and Man Ray before him — Villa Azuréa rests on 2.1 hectares of cypress, olive, and wild rosemary above the Bay of Cannes."` |
-| `narrative.para2` | `"Six hundred square metres of living space open to a seventeen-metre infinity pool that meets the horizon. The sea on one side, the Préalpes on the other."` |
-| `feature.eyebrow` | `"Indoor · Outdoor"` |
-| `feature.title` | `"Where the horizon\nbecomes the room."` |
-| `feature.lead` | `"Floor-to-ceiling glazing dissolves the line between living spaces and the Mediterranean panorama. From the covered terrace to the infinity edge of the pool, the estate is designed for the choreography of sun, sea and slow afternoons."` |
-| `feature.leftAlt` | `"Covered terrace and outdoor dining at Villa Azuréa"` |
-| `feature.rightAlt` | `"Outdoor living area at Villa Azuréa"` |
-| `location.eyebrow` | `"Location"` |
-| `location.title` | `"In the hills\nof Mougins."` |
-| `location.intro` | `"Set in the historic perched village of Mougins — long beloved by Picasso and Cocteau — the villa is moments from Cannes, twenty-five minutes from Nice Côte d'Azur Airport, and within easy reach of Antibes, Monaco and the perfumeries of Grasse."` |
-| `gallery.eyebrow` | `"Gallery"` |
-| `gallery.title` | `"A walk through\nthe estate."` |
-| `gallery.meta` | `"11 photographs · scroll →"` |
-| `contact.eyebrow` | `"Contact"` |
-| `contact.title` | `"Private viewings,\nby appointment."` |
-| `contact.lede` | `"We respond within 24 hours, in French, English, Italian, and Russian."` |
-| `contact.callBtn` | `"Appeler"` |
-| `contact.whatsappBtn` | `"WhatsApp"` |
-| `contact.brochure` | `"Download brochure (PDF)"` |
+| Key                   | EN value                                                                                                                                                                                                                                                |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `nav.gallery`         | `"Gallery"`                                                                                                                                                                                                                                             |
+| `nav.contact`         | `"Contact"`                                                                                                                                                                                                                                             |
+| `about.eyebrow`       | `"The Estate"`                                                                                                                                                                                                                                          |
+| `about.title`         | `"A 600 m² oasis\nabove the Bay of Cannes."`                                                                                                                                                                                                            |
+| `about.lede`          | `"Located in Mougins, in the heart of an exclusive private gated community of ten villas including the historic Château de Lérins, Villa Azuréa embodies the French Riviera art of living combined with modern luxury."`                                |
+| `about.body1`         | `"A rare oasis of peace overlooking the Bay of Cannes, the estate is set on 2.1 hectares of landscaped grounds and offers an exceptional 300-degree panoramic view of the sea and surrounding mountains."`                                              |
+| `about.body2`         | `"Designed as a complex of three buildings — main house, guest house and pool house — the property combines turnkey contemporary interiors with the warmth and craftsmanship of the Provençal tradition."`                                              |
+| `about.quote`         | `"Sea-to-mountain panoramic views, an infinity pool that meets the horizon, and 2.1 hectares of absolute privacy."`                                                                                                                                     |
+| `about.quoteLocation` | `"Mougins · 06250"`                                                                                                                                                                                                                                     |
+| `about.imageAlt`      | `"Aerial view of Villa Azuréa over the Bay of Cannes"`                                                                                                                                                                                                  |
+| `narrative.eyebrow`   | `"The Estate"`                                                                                                                                                                                                                                          |
+| `narrative.para1`     | `"In the hills of Mougins — a village that drew Picasso, who made it his home, and welcomed Cocteau, Léger, and Man Ray before him — Villa Azuréa rests on 2.1 hectares of cypress, olive, and wild rosemary above the Bay of Cannes."`                 |
+| `narrative.para2`     | `"Six hundred square metres of living space open to a seventeen-metre infinity pool that meets the horizon. The sea on one side, the Préalpes on the other."`                                                                                           |
+| `feature.eyebrow`     | `"Indoor · Outdoor"`                                                                                                                                                                                                                                    |
+| `feature.title`       | `"Where the horizon\nbecomes the room."`                                                                                                                                                                                                                |
+| `feature.lead`        | `"Floor-to-ceiling glazing dissolves the line between living spaces and the Mediterranean panorama. From the covered terrace to the infinity edge of the pool, the estate is designed for the choreography of sun, sea and slow afternoons."`           |
+| `feature.leftAlt`     | `"Covered terrace and outdoor dining at Villa Azuréa"`                                                                                                                                                                                                  |
+| `feature.rightAlt`    | `"Outdoor living area at Villa Azuréa"`                                                                                                                                                                                                                 |
+| `location.eyebrow`    | `"Location"`                                                                                                                                                                                                                                            |
+| `location.title`      | `"In the hills\nof Mougins."`                                                                                                                                                                                                                           |
+| `location.intro`      | `"Set in the historic perched village of Mougins — long beloved by Picasso and Cocteau — the villa is moments from Cannes, twenty-five minutes from Nice Côte d'Azur Airport, and within easy reach of Antibes, Monaco and the perfumeries of Grasse."` |
+| `gallery.eyebrow`     | `"Gallery"`                                                                                                                                                                                                                                             |
+| `gallery.title`       | `"A walk through\nthe estate."`                                                                                                                                                                                                                         |
+| `gallery.meta`        | `"11 photographs · scroll →"`                                                                                                                                                                                                                           |
+| `contact.eyebrow`     | `"Contact"`                                                                                                                                                                                                                                             |
+| `contact.title`       | `"Private viewings,\nby appointment."`                                                                                                                                                                                                                  |
+| `contact.lede`        | `"We respond within 24 hours, in French, English, Italian, and Russian."`                                                                                                                                                                               |
+| `contact.callBtn`     | `"Appeler"`                                                                                                                                                                                                                                             |
+| `contact.whatsappBtn` | `"WhatsApp"`                                                                                                                                                                                                                                            |
+| `contact.brochure`    | `"Download brochure (PDF)"`                                                                                                                                                                                                                             |
 
 All new keys must also be added to `fr.json` with correct French translations. Headings with `\n` render via `white-space: pre-line` on the element.
 
@@ -250,24 +280,24 @@ All new keys must also be added to `fr.json` with correct French translations. H
 
 ## Critical Files
 
-| File | Action |
-|------|--------|
-| `app/layout.tsx` | Modify |
-| `app/globals.css` | Rewrite |
-| `app/page.tsx` | Rewrite |
-| `lib/i18n/en.json` + `fr.json` | Modify |
-| `lib/useReveal.ts` | Create |
-| `components/Navbar.tsx` + `.module.css` | Rewrite |
-| `components/Hero.tsx` + `.module.css` | Rewrite |
-| `components/About.tsx` + `.module.css` | Create |
-| `components/Narrative.tsx` + `.module.css` | Create |
-| `components/FeatureStrip.tsx` + `.module.css` | Create |
-| `components/LocationMap.tsx` + `.module.css` | Create |
-| `components/Location.tsx` + `.module.css` | Create |
-| `components/Gallery.tsx` + `.module.css` | Create |
-| `components/Contact.tsx` + `.module.css` | Create |
-| `components/Footer.tsx` + `.module.css` | Create |
-| `components/EstateGallery.tsx` + `.module.css` | Delete |
+| File                                           | Action  |
+| ---------------------------------------------- | ------- |
+| `app/layout.tsx`                               | Modify  |
+| `app/globals.css`                              | Rewrite |
+| `app/page.tsx`                                 | Rewrite |
+| `lib/i18n/en.json` + `fr.json`                 | Modify  |
+| `lib/useReveal.ts`                             | Create  |
+| `components/Navbar.tsx` + `.module.css`        | Rewrite |
+| `components/Hero.tsx` + `.module.css`          | Rewrite |
+| `components/About.tsx` + `.module.css`         | Create  |
+| `components/Narrative.tsx` + `.module.css`     | Create  |
+| `components/FeatureStrip.tsx` + `.module.css`  | Create  |
+| `components/LocationMap.tsx` + `.module.css`   | Create  |
+| `components/Location.tsx` + `.module.css`      | Create  |
+| `components/Gallery.tsx` + `.module.css`       | Create  |
+| `components/Contact.tsx` + `.module.css`       | Create  |
+| `components/Footer.tsx` + `.module.css`        | Create  |
+| `components/EstateGallery.tsx` + `.module.css` | Delete  |
 
 ---
 
