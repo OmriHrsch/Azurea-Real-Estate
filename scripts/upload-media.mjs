@@ -6,7 +6,11 @@ import { fileURLToPath } from "url";
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 const ROOT = join(__dirname, "..");
 const PHOTOS_DIR = join(ROOT, "media", "photos-comp");
-const DEFAULT_VIDEO_PATH = join(ROOT, "media", "hero-video.mp4");
+const DEFAULT_VIDEO_PATH = join(
+  ROOT,
+  "media",
+  "Hero video - Maena's version .mp4",
+);
 const MANIFEST_PATH = join(ROOT, "lib", "media-manifest.json");
 
 const PHOTO_EXTS = new Set([".jpg", ".jpeg", ".png", ".webp"]);
@@ -16,7 +20,9 @@ const args = process.argv.slice(2);
 const videoOnlyFlag = args.includes("--video-only");
 const videoPathArg = args.find((a) => !a.startsWith("--"));
 const VIDEO_PATH = videoPathArg
-  ? videoPathArg.startsWith("/") ? videoPathArg : join(ROOT, "media", videoPathArg)
+  ? videoPathArg.startsWith("/")
+    ? videoPathArg
+    : join(ROOT, "media", videoPathArg)
   : DEFAULT_VIDEO_PATH;
 
 const BASE_FLAGS = [
