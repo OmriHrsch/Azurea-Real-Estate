@@ -2,8 +2,10 @@
 
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
   type ReactNode,
 } from "react";
@@ -32,11 +34,19 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     document.documentElement.lang = locale;
   }, [locale]);
 
-  const t = (key: TranslationKey): string =>
-    translations[locale][key] ?? translations.en[key] ?? key;
+  const t = useCallback(
+    (key: TranslationKey): string =>
+      translations[locale][key] ?? translations.en[key] ?? key,
+    [locale],
+  );
+
+  const value = useMemo(
+    () => ({ locale, setLocale, t }),
+    [locale, t],
+  );
 
   return (
-    <LocaleContext.Provider value={{ locale, setLocale, t }}>
+    <LocaleContext.Provider value={value}>
       {children}
     </LocaleContext.Provider>
   );
