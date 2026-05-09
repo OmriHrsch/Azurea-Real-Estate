@@ -5,7 +5,7 @@ import { fileURLToPath } from "url";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 const ROOT = join(__dirname, "..");
-const PHOTOS_DIR = join(ROOT, "media", "photos");
+const PHOTOS_DIR = join(ROOT, "media", "photos-comp");
 const DEFAULT_VIDEO_PATH = join(ROOT, "media", "hero-video.mp4");
 const MANIFEST_PATH = join(ROOT, "lib", "media-manifest.json");
 
