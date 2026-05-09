@@ -57,7 +57,7 @@ export default function Hero() {
     <section className={styles.hero}>
       <div ref={bgRef} className={styles.heroBg}>
         <Image
-          src={photo("Azurea-6.JPG")}
+          src={photo("Hero Video - Image PlaceHolder.jpg")}
           alt={t("hero.imageAlt")}
           fill
           priority
