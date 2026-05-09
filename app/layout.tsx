@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Montserrat } from "next/font/google";
 import { LocaleProvider } from "@/lib/i18n";
+import "leaflet/dist/leaflet.css";
 import "./globals.css";
 
 const cormorantGaramond = Cormorant_Garamond({

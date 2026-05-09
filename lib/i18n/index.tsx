@@ -13,7 +13,7 @@ import fr from "./fr.json";
 export type Locale = "en" | "fr";
 
 type Translations = typeof en;
-type TranslationKey = keyof Translations;
+export type TranslationKey = keyof Translations;
 
 const translations: Record<Locale, Translations> = { en, fr };
 
