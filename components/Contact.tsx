@@ -2,9 +2,11 @@
 
 import { useRef } from "react";
 import { useLocale } from "@/lib/i18n";
-import { photo } from "@/lib/media";
+import { BROCHURE_DOWNLOAD_FILENAME, photo } from "@/lib/media";
 import { useReveal } from "@/lib/useReveal";
 import styles from "./Contact.module.css";
+
+const BROCHURE_DOWNLOAD_PATH = "/api/brochure";
 
 const AGENTS = [
   {
@@ -117,7 +119,11 @@ export default function Contact() {
             private.viewings@azurea.fr
           </a>
           <span className={styles.divider} aria-hidden="true" />
-          <a href="#contact" className={styles.brochure}>
+          <a
+            href={BROCHURE_DOWNLOAD_PATH}
+            className={styles.brochure}
+            download={BROCHURE_DOWNLOAD_FILENAME}
+          >
             <DownloadIcon />
             {t("contact.brochure")}
           </a>

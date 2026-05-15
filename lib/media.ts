@@ -4,6 +4,8 @@ export type PhotoKey = keyof typeof manifest.photos;
 
 export const PHOTOS = manifest.photos as Record<string, string>;
 export const VIDEO_URL: string = manifest.video;
+export const BROCHURE_URL: string = manifest.brochure;
+export const BROCHURE_DOWNLOAD_FILENAME = "Villa-Azurea-Brochure.pdf";
 
 export function photo(filename: PhotoKey): string {
   const url = PHOTOS[filename];

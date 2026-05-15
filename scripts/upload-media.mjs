@@ -6,11 +6,13 @@ import { fileURLToPath } from "url";
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 const ROOT = join(__dirname, "..");
 const PHOTOS_DIR = join(ROOT, "media", "photos-comp");
+const BROCHURE_FILENAME = "Azurea Brochure - EN_compressed.pdf";
 const DEFAULT_VIDEO_PATH = join(
   ROOT,
   "media",
   "Hero video - Maena's version .mp4",
 );
+const DEFAULT_BROCHURE_PATH = join(ROOT, "media", BROCHURE_FILENAME);
 const MANIFEST_PATH = join(ROOT, "lib", "media-manifest.json");
 
 const PHOTO_EXTS = new Set([".jpg", ".jpeg", ".png", ".webp"]);
@@ -18,12 +20,17 @@ const VERCEL = process.env.VERCEL_CLI_PATH ?? "vercel";
 
 const args = process.argv.slice(2);
 const videoOnlyFlag = args.includes("--video-only");
+const brochureOnlyFlag = args.includes("--brochure-only");
 const videoPathArg = args.find((a) => !a.startsWith("--"));
 const VIDEO_PATH = videoPathArg
   ? videoPathArg.startsWith("/")
     ? videoPathArg
     : join(ROOT, "media", videoPathArg)
   : DEFAULT_VIDEO_PATH;
+
+if (videoOnlyFlag && brochureOnlyFlag) {
+  throw new Error("Use either --video-only or --brochure-only, not both.");
+}
 
 const BASE_FLAGS = [
   "--access",
@@ -61,11 +68,16 @@ function blobPut(localPath, pathname) {
 }
 
 const existing = JSON.parse(readFileSync(MANIFEST_PATH, "utf8"));
-const manifest = videoOnlyFlag
-  ? { photos: existing.photos, video: "" }
-  : { photos: {}, video: "" };
+const shouldUploadPhotos = !videoOnlyFlag && !brochureOnlyFlag;
+const shouldUploadVideo = !brochureOnlyFlag;
+const shouldUploadBrochure = !videoOnlyFlag;
+const manifest = {
+  photos: shouldUploadPhotos ? {} : existing.photos,
+  video: shouldUploadVideo ? "" : existing.video,
+  brochure: shouldUploadBrochure ? "" : existing.brochure,
+};
 
-if (!videoOnlyFlag) {
+if (shouldUploadPhotos) {
   const photoFiles = readdirSync(PHOTOS_DIR)
     .filter((f) => PHOTO_EXTS.has(extname(f).toLowerCase()))
     .sort((a, b) => {
@@ -86,9 +98,24 @@ if (!videoOnlyFlag) {
   console.log(`Skipping photos — using existing URLs from manifest.`);
 }
 
-console.log(`\nUploading video: ${VIDEO_PATH}`);
-manifest.video = blobPut(VIDEO_PATH, "azurea/Azurea.mp4");
-console.log("  done");
+if (shouldUploadVideo) {
+  console.log(`\nUploading video: ${VIDEO_PATH}`);
+  manifest.video = blobPut(VIDEO_PATH, "azurea/Azurea.mp4");
+  console.log("  done");
+} else {
+  console.log(`Skipping video — using existing URL from manifest.`);
+}
+
+if (shouldUploadBrochure) {
+  console.log(`\nUploading brochure: ${DEFAULT_BROCHURE_PATH}`);
+  manifest.brochure = blobPut(
+    DEFAULT_BROCHURE_PATH,
+    `azurea/${BROCHURE_FILENAME}`,
+  );
+  console.log("  done");
+} else {
+  console.log(`Skipping brochure — using existing URL from manifest.`);
+}
 
 writeFileSync(MANIFEST_PATH, JSON.stringify(manifest, null, 2) + "\n");
 console.log(`\n✓ Manifest written to lib/media-manifest.json`);
