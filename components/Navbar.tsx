@@ -16,7 +16,6 @@ const NAV_LINK_KEYS = [
   { key: "nav.estate" as const, href: "#about" },
   { key: "nav.location" as const, href: "#location" },
   { key: "nav.gallery" as const, href: "#gallery" },
-  { key: "nav.contact" as const, href: "#contact" },
 ];
 
 const LOCALES: Locale[] = ["en", "fr"];
@@ -158,6 +157,13 @@ export default function Navbar() {
               {t(key)}
             </a>
           ))}
+          <a
+            href="#contact"
+            className={`${styles.navLink} ${styles.mobileCta}`}
+            onClick={(event) => handleSectionLinkClick(event, "#contact")}
+          >
+            {t("nav.cta")}
+          </a>
         </nav>
 
         <div className={styles.navRight}>

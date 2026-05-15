@@ -1,7 +1,10 @@
 .footer {
   background: var(--navy-deep);
   border-top: 1px solid color-mix(in srgb, var(--paper) 8%, transparent);
+  display: flex;
+  justify-content: center;
   padding: 36px 48px;
+  text-align: center;
 }
 
 .footer p {
@@ -12,6 +15,7 @@
   text-transform: uppercase;
   color: color-mix(in srgb, var(--paper) 50%, transparent);
   margin: 0;
+  max-width: 72ch;
 }
 
 .footer span {

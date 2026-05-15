@@ -78,6 +78,10 @@
   color: var(--paper);
 }
 
+.mobileCta {
+  display: none;
+}
+
 .scrolled .navLink {
   color: var(--muted);
 }
@@ -228,6 +232,12 @@
 
   .navLinksOpen {
     display: flex;
+  }
+
+  .mobileCta {
+    display: inline-flex;
+    padding: 11px 14px;
+    border: 1px solid var(--navy);
   }
 
   .navLinks .navLink {

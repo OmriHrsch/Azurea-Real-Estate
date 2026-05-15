@@ -45,45 +45,33 @@ const POINTS_OF_INTEREST: PointOfInterest[] = [
   },
   {
     nameKey: "location.poi.2.name",
-    coord: [43.5513, 7.0128],
-    dist: "8 km · 15 min",
+    coord: [43.547998, 6.955176],
+    dist: "4 km · 8 min",
     descKey: "location.poi.2.desc",
   },
   {
     nameKey: "location.poi.3.name",
-    coord: [43.5808, 7.1239],
-    dist: "15 km · 22 min",
+    coord: [43.549444, 7.013333],
+    dist: "7 km · 13 min",
     descKey: "location.poi.3.desc",
   },
   {
     nameKey: "location.poi.4.name",
-    coord: [43.6584, 6.9225],
+    coord: [43.5808, 7.1239],
     dist: "15 km · 22 min",
     descKey: "location.poi.4.desc",
   },
   {
     nameKey: "location.poi.5.name",
-    coord: [43.6217, 7.0498],
-    dist: "6 km · 12 min",
+    coord: [43.6584, 7.2158],
+    dist: "25 km · 25 min",
     descKey: "location.poi.5.desc",
   },
   {
     nameKey: "location.poi.6.name",
-    coord: [43.6584, 7.2158],
-    dist: "25 km · 25 min",
-    descKey: "location.poi.6.desc",
-  },
-  {
-    nameKey: "location.poi.7.name",
     coord: [43.7384, 7.4246],
     dist: "55 km · 50 min",
-    descKey: "location.poi.7.desc",
-  },
-  {
-    nameKey: "location.poi.8.name",
-    coord: [43.6973, 7.1224],
-    dist: "22 km · 30 min",
-    descKey: "location.poi.8.desc",
+    descKey: "location.poi.6.desc",
   },
 ];
 
@@ -123,38 +111,34 @@ export default function LocationMap() {
     let timeoutId = 0;
 
     async function loadMap(): Promise<void> {
-      const L = await import("leaflet");
+      const loadedMap = await import("leaflet");
       if (!isMounted || !mapElementRef.current || mapRef.current) return;
 
-      const map = L.map(mapElementRef.current, {
-        scrollWheelZoom: false,
-        zoomControl: false,
-      }).setView(VILLA_COORDINATES, MAP_ZOOM_INITIAL);
+      const map = loadedMap
+        .map(mapElementRef.current, {
+          scrollWheelZoom: false,
+          zoomControl: false,
+        })
+        .setView(VILLA_COORDINATES, MAP_ZOOM_INITIAL);
 
-      L.control.zoom({ position: "topright" }).addTo(map);
-      L.tileLayer(TILE_LAYER_URL, {
-        attribution: TILE_ATTRIBUTION,
-      }).addTo(map);
-
-      const villaIcon = L.divIcon({
-        className: styles.villaIcon,
-        html: "A",
-        iconSize: [44, 44],
-        iconAnchor: [22, 22],
-      });
+      loadedMap.control.zoom({ position: "topright" }).addTo(map);
+      loadedMap
+        .tileLayer(TILE_LAYER_URL, {
+          attribution: TILE_ATTRIBUTION,
+        })
+        .addTo(map);
 
       markersRef.current = POINTS_OF_INTEREST.map((point, index) => {
-        const indexedPoiIcon = point.isVilla
-          ? villaIcon
-          : L.divIcon({
-              className: styles.poiIcon,
-              html: `<span>${formatMapIndex(index)}</span>`,
-              iconSize: [34, 34],
-              iconAnchor: [17, 17],
-            });
-        const marker = L.marker(point.coord, {
-          icon: indexedPoiIcon,
-        })
+        const indexedPoiIcon = loadedMap.divIcon({
+          className: styles.poiIcon,
+          html: `<span>${formatMapIndex(index)}</span>`,
+          iconSize: [34, 34],
+          iconAnchor: [17, 17],
+        });
+        const marker = loadedMap
+          .marker(point.coord, {
+            icon: indexedPoiIcon,
+          })
           .addTo(map)
           .bindPopup(createPopupContent(point, t));
 

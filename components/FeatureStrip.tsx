@@ -38,7 +38,6 @@ export default function FeatureStrip() {
 
       <div className={styles.caption}>
         <div className={`${styles.inner} reveal`}>
-          <p className={styles.eyebrow}>{t("feature.eyebrow")}</p>
           <h2 className={styles.title}>{t("feature.title")}</h2>
           <p className={styles.lead}>{t("feature.lead")}</p>
         </div>

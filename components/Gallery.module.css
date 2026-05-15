@@ -263,3 +263,98 @@
     padding: 0 22px;
   }
 }
+
+@media (max-width: 640px) {
+  .gallery {
+    padding: 72px 0;
+  }
+
+  .header {
+    gap: 22px;
+    margin-bottom: 40px;
+    padding: 0 18px;
+  }
+
+  .eyebrow {
+    margin-bottom: 18px;
+  }
+
+  .title {
+    font-size: clamp(34px, 11vw, 44px);
+  }
+
+  .meta {
+    max-width: 24ch;
+  }
+
+  .reel {
+    gap: 12px;
+    padding: 0 18px 24px;
+    scroll-padding-inline: 18px;
+  }
+
+  .card {
+    height: clamp(320px, 112vw, 460px);
+    scroll-snap-align: start;
+  }
+
+  .portrait,
+  .landscape,
+  .square {
+    width: 82vw;
+  }
+
+  .caption {
+    left: 18px;
+    right: 18px;
+    bottom: 18px;
+    gap: 6px;
+    font-size: 10px;
+    line-height: 1.45;
+  }
+
+  .number {
+    font-size: 26px;
+  }
+
+  .controls {
+    gap: 10px;
+    padding: 0 18px;
+  }
+
+  .progressTrack {
+    min-width: 44px;
+  }
+
+  .counter {
+    min-width: 54px;
+  }
+
+  .lightbox {
+    padding: 70px 18px 88px;
+  }
+
+  .lightboxImage {
+    max-width: calc(100vw - 36px);
+    max-height: calc(100vh - 176px);
+  }
+
+  .lightboxClose {
+    top: 18px;
+    right: 18px;
+  }
+
+  .lightboxPrev,
+  .lightboxNext {
+    bottom: 24px;
+    top: auto;
+  }
+
+  .lightboxPrev {
+    left: calc(50% - 52px);
+  }
+
+  .lightboxNext {
+    right: calc(50% - 52px);
+  }
+}

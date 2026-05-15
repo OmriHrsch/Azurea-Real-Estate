@@ -9,6 +9,9 @@ import styles from "./Gallery.module.css";
 
 const SCROLL_STEP_RATIO = 0.6;
 const FIRST_INDEX = 0;
+const INDEX_DIGITS = 2;
+const MIN_SCROLL_RANGE = 1;
+const SCROLL_EDGE_TOLERANCE_PX = 2;
 
 interface GalleryCard {
   file: PhotoKey;
@@ -17,21 +20,32 @@ interface GalleryCard {
 }
 
 const CARDS: GalleryCard[] = [
-  { file: "Azurea-6.JPG", size: "landscape", labelKey: "gallery.card.1" },
-  { file: "Azurea-10.JPG", size: "portrait", labelKey: "gallery.card.2" },
-  { file: "Azurea-12.JPG", size: "square", labelKey: "gallery.card.3" },
-  { file: "Azurea-22.JPG", size: "landscape", labelKey: "gallery.card.4" },
-  { file: "Azurea-47.JPG", size: "portrait", labelKey: "gallery.card.5" },
-  { file: "Azurea-25.JPG", size: "square", labelKey: "gallery.card.6" },
-  { file: "Azurea-30.JPG", size: "portrait", labelKey: "gallery.card.7" },
-  { file: "Azurea-20.JPG", size: "landscape", labelKey: "gallery.card.8" },
-  { file: "Azurea-40.JPG", size: "square", labelKey: "gallery.card.9" },
-  { file: "Azurea-50.JPG", size: "landscape", labelKey: "gallery.card.10" },
-  { file: "Azurea-1.JPG", size: "landscape", labelKey: "gallery.card.11" },
+  { file: "Azurea-1.JPG", size: "landscape", labelKey: "gallery.card.1" },
+  { file: "Azurea-3.JPG", size: "landscape", labelKey: "gallery.card.2" },
+  { file: "Azurea-5.JPG", size: "square", labelKey: "gallery.card.3" },
+  { file: "Azurea-6.JPG", size: "landscape", labelKey: "gallery.card.4" },
+  { file: "Azurea-10.JPG", size: "square", labelKey: "gallery.card.5" },
+  { file: "Azurea-12.JPG", size: "square", labelKey: "gallery.card.6" },
+  { file: "Azurea-14.JPG", size: "square", labelKey: "gallery.card.7" },
+  { file: "Azurea-18.JPG", size: "portrait", labelKey: "gallery.card.8" },
+  { file: "Azurea-20.JPG", size: "portrait", labelKey: "gallery.card.9" },
+  { file: "Azurea-22.JPG", size: "landscape", labelKey: "gallery.card.10" },
+  { file: "Azurea-23.JPG", size: "square", labelKey: "gallery.card.11" },
+  { file: "Azurea-25.JPG", size: "square", labelKey: "gallery.card.12" },
+  { file: "Azurea-28.JPG", size: "landscape", labelKey: "gallery.card.13" },
+  { file: "Azurea-30.JPG", size: "portrait", labelKey: "gallery.card.14" },
+  { file: "Azurea-31.JPG", size: "square", labelKey: "gallery.card.15" },
+  { file: "Azurea-32.JPG", size: "portrait", labelKey: "gallery.card.16" },
+  { file: "Azurea-34.JPG", size: "square", labelKey: "gallery.card.17" },
+  { file: "Azurea-40.JPG", size: "square", labelKey: "gallery.card.18" },
+  { file: "Azurea-42.JPG", size: "square", labelKey: "gallery.card.19" },
+  { file: "Azurea-47.JPG", size: "landscape", labelKey: "gallery.card.20" },
+  { file: "Azurea-48.JPG", size: "landscape", labelKey: "gallery.card.21" },
+  { file: "Azurea-50.JPG", size: "landscape", labelKey: "gallery.card.22" },
 ];
 
 function formatIndex(index: number): string {
-  return String(index + 1).padStart(2, "0");
+  return String(index + 1).padStart(INDEX_DIGITS, "0");
 }
 
 export default function Gallery() {
@@ -50,8 +64,13 @@ export default function Gallery() {
     const reel = reelRef.current;
     if (!reel) return;
 
+    let animationFrameId: number | null = null;
+
     const updateReelState = () => {
-      const maxScroll = Math.max(reel.scrollWidth - reel.clientWidth, 1);
+      const maxScroll = Math.max(
+        reel.scrollWidth - reel.clientWidth,
+        MIN_SCROLL_RANGE,
+      );
       const reelCenter = reel.scrollLeft + reel.clientWidth / 2;
       const figures = Array.from(reel.querySelectorAll<HTMLElement>("figure"));
       const closestIndex = figures.reduce((closest, figure, index) => {
@@ -67,16 +86,25 @@ export default function Gallery() {
 
       setCurrentIndex(closestIndex);
       setProgress(reel.scrollLeft / maxScroll);
-      setCanScrollPrev(reel.scrollLeft > 2);
-      setCanScrollNext(reel.scrollLeft < maxScroll - 2);
+      setCanScrollPrev(reel.scrollLeft > SCROLL_EDGE_TOLERANCE_PX);
+      setCanScrollNext(reel.scrollLeft < maxScroll - SCROLL_EDGE_TOLERANCE_PX);
+    };
+
+    const requestReelStateUpdate = () => {
+      if (animationFrameId !== null) return;
+      animationFrameId = requestAnimationFrame(() => {
+        animationFrameId = null;
+        updateReelState();
+      });
     };
 
     updateReelState();
-    reel.addEventListener("scroll", updateReelState, { passive: true });
-    window.addEventListener("resize", updateReelState);
+    reel.addEventListener("scroll", requestReelStateUpdate, { passive: true });
+    window.addEventListener("resize", requestReelStateUpdate);
     return () => {
-      reel.removeEventListener("scroll", updateReelState);
-      window.removeEventListener("resize", updateReelState);
+      if (animationFrameId !== null) cancelAnimationFrame(animationFrameId);
+      reel.removeEventListener("scroll", requestReelStateUpdate);
+      window.removeEventListener("resize", requestReelStateUpdate);
     };
   }, []);
 
