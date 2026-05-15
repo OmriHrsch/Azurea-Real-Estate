@@ -172,8 +172,10 @@ export default function Navbar() {
               <span key={l} className={styles.localePair}>
                 {i > 0 && <span className={styles.localeSep}>|</span>}
                 <button
+                  type="button"
                   className={`${styles.localeBtn} ${locale === l ? styles.localeBtnActive : ""}`}
                   onClick={() => setLocale(l)}
+                  aria-pressed={locale === l}
                 >
                   {l.toUpperCase()}
                 </button>
@@ -188,6 +190,22 @@ export default function Navbar() {
           >
             {t("nav.cta")}
           </a>
+        </div>
+
+        <div className={`${styles.localeSwitcher} ${styles.mobileLocaleTop}`}>
+          {LOCALES.map((l, i) => (
+            <span key={l} className={styles.localePair}>
+              {i > 0 && <span className={styles.localeSep}>|</span>}
+              <button
+                type="button"
+                className={`${styles.localeBtn} ${locale === l ? styles.localeBtnActive : ""}`}
+                onClick={() => setLocale(l)}
+                aria-pressed={locale === l}
+              >
+                {l.toUpperCase()}
+              </button>
+            </span>
+          ))}
         </div>
 
         <button

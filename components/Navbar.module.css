@@ -82,6 +82,10 @@
   display: none;
 }
 
+.mobileLocaleTop {
+  display: none;
+}
+
 .scrolled .navLink {
   color: var(--muted);
 }
@@ -251,6 +255,12 @@
 
   .navRight {
     display: none;
+  }
+
+  .mobileLocaleTop {
+    display: flex;
+    margin-left: auto;
+    margin-right: 18px;
   }
 
   .hamburger {
