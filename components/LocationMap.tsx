@@ -91,8 +91,6 @@ type ActivationSource = "marker" | "list" | "initial";
 export default function LocationMap() {
   const { t } = useLocale();
   const mapElementRef = useRef<HTMLDivElement>(null);
-  const poiListRef = useRef<HTMLDivElement>(null);
-  const poiItemRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const mapRef = useRef<Leaflet.Map | null>(null);
   const markersRef = useRef<Leaflet.Marker[]>([]);
   const activationSourceRef = useRef<ActivationSource>("initial");
@@ -205,26 +203,6 @@ export default function LocationMap() {
     marker.openPopup();
   }, [activePoiIndex, selectionVersion]);
 
-  useEffect(() => {
-    const list = poiListRef.current;
-    const item = poiItemRefs.current[activePoiIndex];
-    if (!list || !item) return;
-
-    const listTop = list.scrollTop;
-    const listBottom = listTop + list.clientHeight;
-    const itemTop = item.offsetTop;
-    const itemBottom = itemTop + item.offsetHeight;
-
-    if (itemTop < listTop) {
-      list.scrollTo({ top: itemTop, behavior: "smooth" });
-    } else if (itemBottom > listBottom) {
-      list.scrollTo({
-        top: itemBottom - list.clientHeight,
-        behavior: "smooth",
-      });
-    }
-  }, [activePoiIndex]);
-
   return (
     <div className={styles.locationMap}>
       <div className={styles.mapFrame}>
@@ -256,15 +234,12 @@ export default function LocationMap() {
           <span>006.9990° E</span>
         </div>
       </div>
-      <div ref={poiListRef} className={styles.poiList}>
+      <div className={styles.poiList}>
         {POINTS_OF_INTEREST.map((point, index) => {
           const isActive = index === activePoiIndex;
           return (
             <button
               key={point.nameKey}
-              ref={(element) => {
-                poiItemRefs.current[index] = element;
-              }}
               type="button"
               className={`${styles.poiItem} ${isActive ? styles.poiItemActive : ""}`}
               onClick={() => activatePointOfInterest(index, "list")}
