@@ -1,7 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type MouseEvent,
+  type PointerEvent,
+} from "react";
 import { useLocale, type TranslationKey } from "@/lib/i18n";
 import { photo, type PhotoKey } from "@/lib/media";
 import { useReveal } from "@/lib/useReveal";
@@ -12,11 +18,17 @@ const FIRST_INDEX = 0;
 const INDEX_DIGITS = 2;
 const MIN_SCROLL_RANGE = 1;
 const SCROLL_EDGE_TOLERANCE_PX = 2;
+const LIGHTBOX_SWIPE_THRESHOLD_PX = 48;
 
 interface GalleryCard {
   file: PhotoKey;
   size: "landscape" | "portrait" | "square";
   labelKey: TranslationKey;
+}
+
+interface SwipeStart {
+  x: number;
+  y: number;
 }
 
 const CARDS: GalleryCard[] = [
@@ -52,6 +64,8 @@ export default function Gallery() {
   const { t } = useLocale();
   const sectionRef = useRef<HTMLElement>(null);
   const reelRef = useRef<HTMLDivElement>(null);
+  const lightboxSwipeStartRef = useRef<SwipeStart | null>(null);
+  const didSwipeLightboxRef = useRef(false);
   const [currentIndex, setCurrentIndex] = useState(FIRST_INDEX);
   const [progress, setProgress] = useState(0);
   const [canScrollPrev, setCanScrollPrev] = useState(false);
@@ -138,6 +152,50 @@ export default function Gallery() {
     });
   }
 
+  function moveLightbox(direction: -1 | 1): void {
+    setLightboxIndex((index) =>
+      index === null
+        ? null
+        : (index + direction + CARDS.length) % CARDS.length,
+    );
+  }
+
+  function handleLightboxBackdropClick(event: MouseEvent<HTMLDivElement>): void {
+    if (didSwipeLightboxRef.current) {
+      didSwipeLightboxRef.current = false;
+      return;
+    }
+
+    if (event.target === event.currentTarget) {
+      setLightboxIndex(null);
+    }
+  }
+
+  function handleLightboxPointerDown(event: PointerEvent<HTMLDivElement>): void {
+    if (event.pointerType !== "touch") return;
+    lightboxSwipeStartRef.current = {
+      x: event.clientX,
+      y: event.clientY,
+    };
+  }
+
+  function handleLightboxPointerUp(event: PointerEvent<HTMLDivElement>): void {
+    const swipeStart = lightboxSwipeStartRef.current;
+    lightboxSwipeStartRef.current = null;
+    if (!swipeStart || event.pointerType !== "touch") return;
+
+    const deltaX = event.clientX - swipeStart.x;
+    const deltaY = event.clientY - swipeStart.y;
+    const hasHorizontalSwipe =
+      Math.abs(deltaX) >= LIGHTBOX_SWIPE_THRESHOLD_PX &&
+      Math.abs(deltaX) > Math.abs(deltaY);
+
+    if (!hasHorizontalSwipe) return;
+
+    didSwipeLightboxRef.current = true;
+    moveLightbox(deltaX > 0 ? -1 : 1);
+  }
+
   const hasLightbox = lightboxIndex !== null;
   const activeLightboxIndex = lightboxIndex ?? FIRST_INDEX;
   const lightboxCard = hasLightbox ? CARDS[activeLightboxIndex] : null;
@@ -205,7 +263,14 @@ export default function Gallery() {
       </div>
 
       {lightboxCard && (
-        <div className={styles.lightbox} role="dialog" aria-modal="true">
+        <div
+          className={styles.lightbox}
+          role="dialog"
+          aria-modal="true"
+          onClick={handleLightboxBackdropClick}
+          onPointerDown={handleLightboxPointerDown}
+          onPointerUp={handleLightboxPointerUp}
+        >
           <button
             type="button"
             className={`${styles.lightboxButton} ${styles.lightboxClose}`}
@@ -217,11 +282,7 @@ export default function Gallery() {
           <button
             type="button"
             className={`${styles.lightboxButton} ${styles.lightboxPrev}`}
-            onClick={() =>
-              setLightboxIndex(
-                (activeLightboxIndex - 1 + CARDS.length) % CARDS.length,
-              )
-            }
+            onClick={() => moveLightbox(-1)}
             aria-label={t("gallery.previous")}
           >
             ←
@@ -236,9 +297,7 @@ export default function Gallery() {
           <button
             type="button"
             className={`${styles.lightboxButton} ${styles.lightboxNext}`}
-            onClick={() =>
-              setLightboxIndex((activeLightboxIndex + 1) % CARDS.length)
-            }
+            onClick={() => moveLightbox(1)}
             aria-label={t("gallery.next")}
           >
             →

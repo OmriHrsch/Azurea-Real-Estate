@@ -138,6 +138,7 @@
 .poiList {
   max-height: 600px;
   overflow-y: auto;
+  overscroll-behavior: contain;
   background:
     linear-gradient(
       180deg,
@@ -373,7 +374,7 @@
   }
 
   .poiList {
-    max-height: none;
+    max-height: 264px;
     border-left: 0;
     border-top: 1px solid var(--line);
   }
@@ -387,5 +388,20 @@
 
   .resetMapButton {
     top: 78px;
+  }
+}
+
+@media (max-width: 640px) {
+  .poiList {
+    max-height: 238px;
+  }
+
+  .poiItem {
+    gap: 14px;
+    padding: 20px 22px;
+  }
+
+  .poiName {
+    font-size: 22px;
   }
 }
