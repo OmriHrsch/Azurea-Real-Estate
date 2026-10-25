@@ -82,7 +82,7 @@
   display: none;
 }
 
-.mobileLocaleTop {
+.localeSwitcher.mobileLocaleTop {
   display: none;
 }
 
@@ -257,7 +257,7 @@
     display: none;
   }
 
-  .mobileLocaleTop {
+  .localeSwitcher.mobileLocaleTop {
     display: flex;
     margin-left: auto;
     margin-right: 18px;
