@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type * as Leaflet from "leaflet";
 import { useLocale, type TranslationKey } from "@/lib/i18n";
-import styles from "./LocationMap.module.css";
+import styles from "@/components/LocationMap.module.css";
 
 const ACTIVE_POI_DELAY_MS = 600;
 const MAP_ZOOM_INITIAL = 11;
@@ -13,9 +13,9 @@ const MAP_OVERVIEW_DURATION_SECONDS = 1.2;
 const MAP_PAN_DURATION_SECONDS = 0.4;
 const SELECTION_VERSION_INCREMENT = 1;
 const TILE_LAYER_URL =
-  "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
+  "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
 const TILE_ATTRIBUTION =
-  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>';
+  '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
 interface PointOfInterest {
   nameKey: TranslationKey;
